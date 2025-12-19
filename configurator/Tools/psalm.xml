@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<psalm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://getpsalm.org/schema/config.xsd"
+    errorLevel="1"
+    resolveFromConfigFile="true"
+    findUnusedCode="true"
+    findUnusedVariablesAndParams="true"
+    totallyTyped="false"
+    allowPhpStormGenerics="true"
+>
+    <projectFiles>
+        <directory name="config"/>
+        <directory name="routes"/>
+        <directory name="src"/>
+        <directory name="tests"/>
+    </projectFiles>
+    <plugins>
+        <pluginClass class="Psalm\LaravelPlugin\Plugin"/>
+    </plugins>
+    <issueHandlers>
+        <MissingReturnType errorLevel="info"/>
+        <PossiblyUnusedMethod errorLevel="info"/>
+    </issueHandlers>
+</psalm>

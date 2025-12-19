@@ -1,0 +1,21 @@
+<?php
+
+namespace :namespace\Facades;
+
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * @see \:namespace\:service_provider_name
+ */
+class :class_nameFacade extends Facade
+{
+    /**
+     * Get the registered name of the component.
+     *
+     * @return string
+     */
+    protected static function getFacadeAccessor()
+    {
+        return ':variable';
+    }
+}

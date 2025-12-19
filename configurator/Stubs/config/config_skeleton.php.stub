@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | :package_name Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Here you can configure the settings for :package_name.
+    |
+    */
+
+    'enabled' => env(':package_slug_upper_ENABLED', true),
+];

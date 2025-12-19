@@ -1,0 +1,60 @@
+<?php
+
+namespace :namespace;
+
+use Illuminate\Support\ServiceProvider;
+
+class :service_provider_name extends ServiceProvider
+{
+    public function register(): void
+    {
+        :if_include_config
+        $this->mergeConfigFrom(__DIR__ . '/../config/:package_slug.php', ':package_slug');
+        :endif_include_config
+    }
+
+    public function boot(): void
+    {
+        :if_include_translations
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', ':package_slug');
+        $this->publishes([
+            __DIR__ . '/../lang' => $this->app->langPath('vendor/:package_slug'),
+        ], ':package_slug-lang');
+        :endif_include_translations
+
+        :if_include_migration
+        $this->publishesMigrations([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ]);
+        :endif_include_migration
+
+        :if_include_views
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', ':package_slug');
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/:package_slug'),
+        ], ':package_slug-views');
+        :endif_include_views
+
+        :if_include_config
+        $this->publishes([
+            __DIR__ . '/../config/:package_slug.php' => config_path(':package_slug.php'),
+        ], ':package_slug-config');
+        :endif_include_config
+
+        :if_include_api_routes
+        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        :endif_include_api_routes
+
+        :if_include_web_routes
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        :endif_include_web_routes
+
+        :if_include_command
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                :command_class
+            ]);
+        }
+        :endif_include_command
+    }
+}

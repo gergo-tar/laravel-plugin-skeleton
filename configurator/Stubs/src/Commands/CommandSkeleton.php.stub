@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace :namespace\Commands;
+
+use Illuminate\Console\Command;
+
+class :class_nameCommand extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * Example: ':package_slug {argument} {--option}'
+     */
+    protected $signature = ':package_slug';
+
+    /**
+     * The console command description.
+     */
+    protected $description = 'My command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(): int
+    {
+        // TODO: Add your command logic here
+        $this->info('Executing :package_name command...');
+
+        // Example: $argument = $this->argument('argument');
+        // Example: $option = $this->option('option');
+
+        $this->comment('All done');
+        return self::SUCCESS;
+    }
+}

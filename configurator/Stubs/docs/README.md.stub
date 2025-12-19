@@ -1,0 +1,86 @@
+
+# :package_name
+
+This is the :package_name package.
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/:author_username/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:author_username/:package_slug)
+[![Total Downloads](https://img.shields.io/packagist/dt/:author_username/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:author_username/:package_slug)
+:if_include_workflow[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/:author_username/:package_slug/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:author_username/:package_slug/actions?query=workflow%3Atests+branch%3Amain):endif_include_workflow
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone your new package repository:**
+   ```bash
+   git clone https://github.com/:author_username/:package_slug.git
+   cd :package_slug
+   ```
+2. **Install dependencies:**
+   ```bash
+   composer install
+   ```
+
+## ✨ Features
+
+:if_include_tests- **Testing Ready** - Pest + Orchestra Testbench pre-configured:endif_include_tests
+:if_include_code_quality_tools- **Code Quality** - :code_quality_tools included:endif_include_code_quality_tools
+:if_include_workflow- **CI/CD** - GitHub Actions with matrix testing :endif_include_workflow
+- **Modern PHP** - PHP :php_version+, strict types enforced
+- **Best Practices** - Following Laravel package development standards
+
+## 📦 What's Included
+
+- Service provider with auto-discovery
+:if_include_config- Config file template:endif_include_config
+:if_include_migration- Migration template:endif_include_migration
+:if_include_command- Artisan command templates:endif_include_command
+:if_include_facade- Facade templates:endif_include_facade
+:if_include_tests- Example Pest tests:endif_include_tests
+
+## 🛠️ Usage
+
+:if_include_config
+To publish the config file:
+```bash
+php artisan vendor:publish --tag=":package_slug-config"
+```
+:endif_include_config
+
+:if_include_migration
+To publish migrations:
+```bash
+php artisan vendor:publish --tag=":package_slug-migrations"
+```
+:endif_include_migration
+
+:if_include_command
+To use the provided command, run:
+```bash
+php artisan :command_name
+```
+:endif_include_command
+
+:if_include_tests## 🧪 Testing
+
+Run tests with Pest:
+```bash
+composer test
+```
+:endif_include_tests
+
+:if_include_workflow## 🔄 Continuous Integration
+
+This package includes a GitHub Actions workflow for automated testing and code quality checks.:endif_include_workflow
+
+## 🤝 Contributing
+
+See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
+
+## 📄 License
+
+:license. See [LICENSE](LICENSE.md) for more information.
+
+---
+
+This package was created with [gergo-tar/laravel-plugin-skeleton](https://github.com/gergo-tar/laravel-plugin-skeleton)_

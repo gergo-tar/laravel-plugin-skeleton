@@ -1,0 +1,75 @@
+{
+  "name": ":vendor_slug/:package_slug",
+  "version": "1.0.0",
+  "description": ":package_description",
+  "keywords": [
+    "laravel",
+    "laravel-plugin-skeleton"
+  ],
+  "homepage": "https://github.com/:author_username/:package_slug",
+  "license": ":license",
+  "authors": [
+    {
+      "name": ":author_name",
+      "email": ":author_email",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ":php_version",
+    "illuminate/contracts": ":laravel_version"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.17",
+    "larastan/larastan": "^3.8",
+    "mockery/mockery": "^1.6",
+    "nunomaduro/collision": "^8.1",
+    "orchestra/testbench": ":testbench_version",
+    "pestphp/pest": "^4.2",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan-deprecation-rules": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "rector/rector": "^2.2",
+    "psalm/plugin-laravel": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      ":composer_namespace\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      ":composer_namespace\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-create-project-cmd": [
+      "@php configure.php"
+    ],
+    "test": "vendor/bin/pest",
+    "test-coverage": "vendor/bin/pest --coverage",
+    "format": "vendor/bin/pint",
+    "analyse": "vendor/bin/phpstan analyse",
+    "refactor": "vendor/bin/rector process",
+    "refactor-dry": "vendor/bin/rector process --dry-run",
+    "psalm": "vendor/bin/psalm --output-format=github"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "phpstan/extension-installer": true,
+      "psalm/plugin-laravel": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        ":composer_namespace\\:service_provider_name"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

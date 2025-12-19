@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Support\ServiceProvider;
+
+it('loads the service provider', function () {
+    $provider = app()->getProvider(\:namespace\:service_provider_name::class);
+    expect($provider)->toBeInstanceOf(ServiceProvider::class);
+});
+
+// The following test is only relevant if config support is enabled during configuration.
+// If you did not select config support, this test can be removed.
+if (file_exists(base_path('config/:package_slug.php'))) {
+    it('loads config if enabled', function () {
+        $config = config(':package_slug');
+        expect($config)->toBeArray();
+        expect($config)->toHaveKey('enabled');
+    });
+}
