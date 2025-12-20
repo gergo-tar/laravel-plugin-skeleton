@@ -14,3 +14,4 @@ jobs:
         uses: hotaruma/packagist-sync@v1.0.1
         with:
           api-token: ${{ secrets.PACKAGIST_TOKEN }}
+          composer-json-path: ./
