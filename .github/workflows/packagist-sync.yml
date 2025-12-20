@@ -1,0 +1,16 @@
+name: Sync Packagist
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Packagist Sync
+        uses: hotaruma/packagist-sync@v1.0.1
+        with:
+          api-token: ${{ secrets.PACKAGIST_TOKEN }}

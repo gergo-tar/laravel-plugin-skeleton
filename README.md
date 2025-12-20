@@ -1,5 +1,7 @@
 # Laravel Package Skeleton
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/gergo-tar/laravel-package-skeleton.svg?style=flat-square)](https://packagist.org/packages/gergo-tar/laravel-package-skeleton)
+
 This package provides a modern, interactive skeleton for building Laravel packages with best practices and essential development tools.
 
 ## 🚀 How It Works
@@ -39,10 +41,11 @@ This package provides a modern, interactive skeleton for building Laravel packag
 
 -   **Pest**: Modern testing framework
 -   **PHPStan (Larastan)**: Static analysis
+-   **Commitlint**: Enforces conventional commit messages
 -   **Rector**: Automated refactoring
 -   **Pint**: Code style fixer
 
-## 📦 UsageUsage
+## 📦 Usage
 
 -   After configuration, your package is ready for local development or publishing.
 -   See [`CONFIGURATION`](./CONFIGURATION.md) for a full guide to the configuration process and available features.

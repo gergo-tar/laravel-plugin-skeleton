@@ -100,6 +100,7 @@ final class ConfiguratorOutput
         ConfigUtil::writeln("  Facade         : " . ($config->includeFacade ? 'yes' : 'no'));
         ConfigUtil::writeln('');
         ConfigUtil::writeln('Dev Tools:');
+        ConfigUtil::writeln("  Commitlint     : " . ($config->useCommitLint ? 'yes' : 'no'));
         ConfigUtil::writeln("  Tests          : " . ($config->includeTests ? 'yes' : 'no'));
         ConfigUtil::writeln("  Pint           : " . ($config->usePint ? 'yes' : 'no'));
         ConfigUtil::writeln("  PHPStan        : " . ($config->usePhpStan ? 'yes' : 'no'));

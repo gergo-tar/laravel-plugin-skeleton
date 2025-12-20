@@ -14,6 +14,7 @@ use Configurator\Structure\GitHub;
 use Configurator\Structure\Composer;
 use Configurator\Structure\Database;
 use Configurator\Structure\Resource;
+use Configurator\Structure\PackageJson;
 use Configurator\Options\LicenseOptions;
 use Configurator\Options\RouteTypeOptions;
 use Configurator\Options\PhpVersionOptions;
@@ -103,6 +104,16 @@ final class ConfiguratorPrompter implements PrompterInterface
     public function promptDescription(?string $defaultDescription = null): string
     {
         return ConfigUtil::ask('Package description', $defaultDescription ?? 'A Laravel package');
+    }
+
+    /**
+     * Prompt for using commitlint and semantic versioning.
+     * @return bool
+     */
+    #[\Override]
+    public function promptEnableCommitLint(): bool
+    {
+        return ConfigUtil::confirm('Use commitlint, commitizen and semantic versioning?', PackageJson::IS_COMMITLINT_INCLUDED);
     }
 
     /**

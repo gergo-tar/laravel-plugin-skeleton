@@ -72,6 +72,7 @@ function configurationVariations(): array
             'include_command' => true,
             'include_facade' => true,
             'include_tests' => true,
+            'use_commitlint' => true,
             'use_pint' => true,
             'use_phpstan' => true,
             'use_rector' => true,
@@ -103,6 +104,7 @@ function configurationVariations(): array
             'include_command' => false,
             'include_facade' => false,
             'include_tests' => false,
+            'use_commitlint' => false,
             'use_pint' => false,
             'use_phpstan' => false,
             'use_rector' => false,
@@ -211,6 +213,19 @@ test('all configuration variations are tested and files generated as expected', 
         } else {
             expect($featureTest)->not->toBeFile();
             expect($unitTest)->not->toBeFile();
+        }
+
+        $packageJsonFile = $tempDir . "/package.json";
+        $commitLintFile = $tempDir . "/commitlint.config.js";
+        if (isset($expected['use_commitlint']) && $expected['use_commitlint'] === true) {
+            expect($commitLintFile)->toBeFile();
+            expect($packageJsonFile)->toBeFile();
+            $packageJsonContent = file_get_contents($packageJsonFile);
+            expect($packageJsonContent)->toContain('"@commitlint/config-conventional"');
+            expect($packageJsonContent)->toContain('"@commitlint/cli"');
+        } else {
+            expect($packageJsonFile)->not->toBeFile();
+            expect($commitLintFile)->not->toBeFile();
         }
 
         $pintFile = $tempDir . "/pint.json";

@@ -8,6 +8,10 @@ final class Composer
 {
     public const string FILE_NAME = 'composer.json';
     public const string STUB = Stub::PATH . '/' . self::FILE_NAME . '.stub';
+
+    /**
+     * Whether to run composer install by default.
+     */
     public const bool IS_COMPOSER_INSTALL_ENABLED = true;
 
     /**

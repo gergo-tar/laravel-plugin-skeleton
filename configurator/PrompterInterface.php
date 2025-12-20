@@ -28,6 +28,7 @@ interface PrompterInterface
     public function promptIncludeCommand(): bool;
     public function promptIncludeFacade(): bool;
     public function promptIncludeTests(): bool;
+    public function promptEnableCommitLint(): bool;
     public function promptEnablePint(): bool;
     public function promptEnablePhpStan(): bool;
     public function promptEnablePsalm(): bool;

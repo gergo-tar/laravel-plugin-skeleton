@@ -1,0 +1,37 @@
+{
+  "name": "laravel-plugin-skeleton",
+  "version": "1.0.0",
+  "description": "[![Latest Version on Packagist](https://img.shields.io/packagist/v/gergo-tar/laravel-package-skeleton.svg?style=flat-square)](https://packagist.org/packages/gergo-tar/laravel-package-skeleton)",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "commit": "cz",
+    "release": "standard-version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gergo-tar/laravel-plugin-skeleton.git"
+  },
+  "keywords": [],
+  "author": "Gergő Tar <dev@gergotar.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gergo-tar/laravel-plugin-skeleton/issues"
+  },
+  "homepage": "https://github.com/gergo-tar/laravel-plugin-skeleton#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^18.0.0",
+    "@commitlint/config-conventional": "^18.0.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.0",
+    "standard-version": "^9.5.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

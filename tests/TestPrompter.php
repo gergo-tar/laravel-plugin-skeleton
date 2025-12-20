@@ -156,6 +156,12 @@ final class TestPrompter implements PrompterInterface
     }
 
     #[\Override]
+    public function promptEnableCommitLint(): bool
+    {
+        return (bool)$this->answer('use_commitlint', true);
+    }
+
+    #[\Override]
     public function promptEnablePint(): bool
     {
         return (bool)$this->answer('use_pint', true);

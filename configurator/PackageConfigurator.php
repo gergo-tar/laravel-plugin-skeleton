@@ -11,11 +11,12 @@ use Configurator\Structure\Route;
 use Configurator\Structure\Tools;
 use Configurator\Structure\Config;
 use Configurator\Structure\GitHub;
+use Configurator\PrompterInterface;
 use Configurator\Structure\Composer;
 use Configurator\Structure\Database;
 use Configurator\Structure\Resource;
 use Configurator\ConfiguratorPrompter;
-use Configurator\PrompterInterface;
+use Configurator\Structure\PackageJson;
 
 final class PackageConfigurator
 {
@@ -43,6 +44,7 @@ final class PackageConfigurator
     public bool $includeTranslations = Resource::IS_TRANSLATIONS_INCLUDED;
     public bool $includeViews = Resource::IS_VIEWS_INCLUDED;
     public bool $includeWorkflow = false;
+    public bool $useCommitLint = PackageJson::IS_COMMITLINT_INCLUDED;
     public bool $usePint = Tools::IS_PINT_ENABLED;
     public bool $usePhpStan = Tools::IS_PHP_STAN_INCLUDED;
     public bool $useRector = Tools::IS_RECTOR_INCLUDED;
@@ -96,6 +98,7 @@ final class PackageConfigurator
         $this->updateComposerJson();
         $this->updateReadmeFile();
         $this->updateServiceProviderFile();
+
         $this->updateWorkflowFile();
         $this->createAdditionalDirectories();
         $this->handleDevTools();
@@ -187,6 +190,7 @@ final class PackageConfigurator
      */
     public function collectDevToolSelections(): void
     {
+        $this->useCommitLint = $this->prompter->promptEnableCommitLint();
         $this->usePint = $this->prompter->promptEnablePint();
         $this->usePhpStan = $this->prompter->promptEnablePhpStan();
         $this->usePsalm = $this->prompter->promptEnablePsalm();
@@ -233,7 +237,6 @@ final class PackageConfigurator
         foreach ($stubMappings as $stubFile => [$dest, $folder]) {
             if (file_exists($stubFile)) {
                 $copied = ConfigUtil::copyFileToDestination($stubFile, $dest, $folder);
-
                 if ($copied) {
                     ConfigUtil::replaceInFile($dest, [
                         ':author_name' => $this->authorName,
@@ -408,6 +411,12 @@ final class PackageConfigurator
             if ($this->usePsalm) {
                 exec('./vendor/bin/psalm --init');
             }
+
+            if ($this->useCommitLint) {
+                ConfigUtil::deleteFolderRecursively($this->basePath . '/node_modules');
+                ConfigUtil::deleteFileIfExists($this->basePath . '/package-lock.json');
+                exec('npm install');
+            }
         }
 
         ConfiguratorOutput::printCompletionMessage();
@@ -438,6 +447,12 @@ final class PackageConfigurator
 
             if (!$this->usePsalm) {
                 ConfigUtil::deleteFileIfExists($this->basePath . '/psalm.xml');
+            }
+
+            if (!$this->useCommitLint) {
+                ConfigUtil::deleteFileIfExists(PackageJson::getFilePath());
+                ConfigUtil::deleteFileIfExists($this->basePath . '/package-lock.json');
+                ConfigUtil::deleteFolderRecursively($this->basePath . '/.husky');
             }
 
             ConfiguratorOutput::printCleanupMessage();
@@ -537,6 +552,14 @@ final class PackageConfigurator
 
         if ($this->includeFunding) {
             $maps[GitHub::FUNDING_STUB] = [GitHub::getPath() . '/' . GitHub::FUNDING_FILE_NAME, GitHub::getPath()];
+        }
+
+        if ($this->useCommitLint) {
+            $maps[PackageJson::STUB] = [PackageJson::getFilePath(), null];
+            $maps[PackageJson::STUB_COMMIT_LINT_CONFIG] = [
+                PackageJson::getCommitLintFilePath(),
+                null,
+            ];
         }
 
         return $maps;

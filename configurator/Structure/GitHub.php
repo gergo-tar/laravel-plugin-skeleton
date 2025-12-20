@@ -22,14 +22,14 @@ final class GitHub
         . '/' . self::WORKFLOW_FILE_NAME . '.stub';
 
     /**
-     * Whether to include workflows by default.
-     */
-    public const bool IS_WORKFLOW_INCLUDED = true;
-
-    /**
      * Whether to include funding file by default.
      */
     public const bool IS_FUNDING_INCLUDED = false;
+
+    /**
+     * Whether to include workflows by default.
+     */
+    public const bool IS_WORKFLOW_INCLUDED = true;
 
     /**
      * Get the full path to the .github folder using the global base path.
