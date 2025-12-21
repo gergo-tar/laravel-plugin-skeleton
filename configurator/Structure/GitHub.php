@@ -11,6 +11,7 @@ final class GitHub
 
     public const string FUNDING_FILE_NAME = 'FUNDING.yml';
     public const string WORKFLOW_FILE_NAME = 'tests.yml';
+    public const string WORKFLOW_PACKAGIST_SYNC_FILE_NAME = 'packagist-sync.yml';
 
     public const string FUNDING_STUB = Stub::PATH
         . '/' . self::FOLDER
@@ -20,6 +21,11 @@ final class GitHub
         . '/' . self::FOLDER
         . '/' . self::WORKFLOWS_FOLDER
         . '/' . self::WORKFLOW_FILE_NAME . '.stub';
+
+    public const string WORKFLOW_PACKAGIST_SYNC_STUB = Stub::PATH
+        . '/' . self::FOLDER
+        . '/' . self::WORKFLOWS_FOLDER
+        . '/' . self::WORKFLOW_PACKAGIST_SYNC_FILE_NAME . '.stub';
 
     /**
      * Whether to include funding file by default.
@@ -53,5 +59,13 @@ final class GitHub
     public static function getWorkflowFilePath(): string
     {
         return self::getWorkflowsPath() . '/' . self::WORKFLOW_FILE_NAME;
+    }
+
+    /**
+     * Get the full path to the packagist sync workflow file using the global base path.
+     */
+    public static function getWorkflowPackagistSyncFilePath(): string
+    {
+        return self::getWorkflowsPath() . '/' . self::WORKFLOW_PACKAGIST_SYNC_FILE_NAME;
     }
 }

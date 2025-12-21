@@ -433,6 +433,15 @@ final class PackageConfigurator
             ConfigUtil::deleteFileIfExists($this->basePath . '/tests/Unit/PackageConfiguratorTest.php');
             ConfigUtil::deleteFileIfExists($this->basePath . '/tests/TestPrompter.php');
 
+            if (!$this->includeWorkflow) {
+                ConfigUtil::deleteFolderRecursively(GitHub::getWorkflowsPath());
+            }
+
+            if (!$this->includeTests) {
+                ConfigUtil::deleteFileIfExists($this->basePath . '/' . Test::PHP_UNIT_FILE_NAME);
+                ConfigUtil::deleteFolderRecursively(Test::getPath());
+            }
+
             if (!$this->usePhpStan) {
                 ConfigUtil::deleteFileIfExists($this->basePath . '/phpstan.neon');
             }
@@ -548,6 +557,13 @@ final class PackageConfigurator
         if ($this->includeWorkflow || $this->isCodeQualityToolSelected()) {
             $this->includeWorkflow = true;
             $maps[GitHub::WORKFLOW_STUB] = [GitHub::getWorkflowFilePath(), GitHub::getWorkflowsPath()];
+        }
+
+        if ($this->includeWorkflow) {
+            $maps[GitHub::WORKFLOW_PACKAGIST_SYNC_STUB] = [
+                GitHub::getWorkflowPackagistSyncFilePath(),
+                GitHub::getWorkflowsPath(),
+            ];
         }
 
         if ($this->includeFunding) {

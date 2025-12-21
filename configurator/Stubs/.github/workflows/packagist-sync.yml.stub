@@ -12,6 +12,6 @@ jobs:
 
       - name: Debug Packagist API
         run: |
-          curl -X POST "https://packagist.org/api/update-package?username=gergo-tar&apiToken=${{ secrets.PACKAGIST_TOKEN }}" \
+          curl -X POST "https://packagist.org/api/update-package?username=:author_username&apiToken=${{ secrets.PACKAGIST_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"repository":"https://github.com/gergo-tar/laravel-package-skeleton"}'
+            -d '{"repository":"https://github.com/:author_username/:package_slug"}'

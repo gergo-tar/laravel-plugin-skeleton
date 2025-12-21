@@ -135,6 +135,16 @@ test('all configuration variations are tested and files generated as expected', 
             ? strtolower($expected['package_name'])
             : 'config';
 
+        $workflowFile = $tempDir . "/.github/workflows/tests.yml";
+        $workflowPackagistFile = $tempDir . "/.github/workflows/packagist-sync.yml";
+        if (isset($expected['include_tests']) && $expected['include_tests'] === true) {
+            expect($workflowFile)->toBeFile();
+            expect($workflowPackagistFile)->toBeFile();
+        } else {
+            expect($workflowFile)->not->toBeFile();
+            expect($workflowPackagistFile)->not->toBeFile();
+        }
+
         $configFile = $tempDir . "/config/{$package}.php";
         if (isset($expected['include_config']) && $expected['include_config'] === true) {
             expect($configFile)->toBeFile();
