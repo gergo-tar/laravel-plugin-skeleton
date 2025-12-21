@@ -1,6 +1,6 @@
 {
   "name": "laravel-plugin-skeleton",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "[![Latest Version on Packagist](https://img.shields.io/packagist/v/gergo-tar/laravel-package-skeleton.svg?style=flat-square)](https://packagist.org/packages/gergo-tar/laravel-package-skeleton)",
   "directories": {
     "test": "tests"
@@ -8,7 +8,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "commit": "cz",
-    "release": "standard-version"
+    "release": "standard-version && npm run postrelease",
+    "postrelease": "jq --arg v $(node -p \"require('./package.json').version\") '.version = $v' composer.json > composer.tmp.json && mv composer.tmp.json composer.json && git add composer.json && git commit -m \"chore: bump composer.json version [skip ci]\" || true"
   },
   "repository": {
     "type": "git",
