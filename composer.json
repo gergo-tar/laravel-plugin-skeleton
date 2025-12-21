@@ -1,6 +1,5 @@
 {
   "name": "gergo-tar/laravel-package-skeleton",
-  "version": "1.2.1",
   "description": "A PHP package to scaffold Laravel package projects with best practices and code quality tools.",
   "type": "library",
   "license": "MIT",

@@ -8,8 +8,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "commit": "cz",
-    "release": "standard-version && npm run postrelease",
-    "postrelease": "jq --arg v $(node -p \"require('./package.json').version\") '.version = $v' composer.json > composer.tmp.json && mv composer.tmp.json composer.json && git add composer.json && git commit -m \"chore: bump composer.json version [skip ci]\" || true"
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
