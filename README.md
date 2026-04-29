@@ -12,6 +12,13 @@ This package provides a modern, interactive skeleton for building Laravel packag
     cd my-package
     ```
 2. **Run the configuration script:**
+   First, run Composer's autoloader dump to ensure classes are properly loaded:
+
+    ```bash
+    composer dump-autoload
+    ```
+
+    Run the configurator>
 
     ```bash
     php configure.php
