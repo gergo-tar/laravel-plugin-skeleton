@@ -285,6 +285,16 @@ final class ConfiguratorPrompter implements PrompterInterface
     }
 
     /**
+     * Prompt for the main branch name (e.g., main, master, trunk).
+     * @return string The main branch name
+     */
+    #[\Override]
+    public function promptMainBranchName(): string
+    {
+        return ConfigUtil::ask('Main branch name', 'main');
+    }
+
+    /**
      * Prompt for the package name.
      * @param string|null $defaultName The default package name
      * @return string The package name

@@ -10,12 +10,17 @@ final class GitHub
     public const string WORKFLOWS_FOLDER = 'workflows';
 
     public const string FUNDING_FILE_NAME = 'FUNDING.yml';
-    public const string WORKFLOW_FILE_NAME = 'tests.yml';
+    public const string GIT_CLIFF_FILE_NAME = 'cliff.toml';
+    public const string WORKFLOW_FILE_NAME = 'ci.yml';
     public const string WORKFLOW_PACKAGIST_SYNC_FILE_NAME = 'packagist-sync.yml';
+    public const string WORKFLOW_RELEASE_PLEASE_FILE_NAME = 'release-please.yml';
 
     public const string FUNDING_STUB = Stub::PATH
         . '/' . self::FOLDER
         . '/' . self::FUNDING_FILE_NAME . '.stub';
+
+    public const string GIT_CLIFF_STUB = Stub::PATH
+        . '/' . self::GIT_CLIFF_FILE_NAME . '.stub';
 
     public const string WORKFLOW_STUB = Stub::PATH
         . '/' . self::FOLDER
@@ -26,6 +31,11 @@ final class GitHub
         . '/' . self::FOLDER
         . '/' . self::WORKFLOWS_FOLDER
         . '/' . self::WORKFLOW_PACKAGIST_SYNC_FILE_NAME . '.stub';
+
+    public const string WORKFLOW_RELEASE_PLEASE_STUB = Stub::PATH
+        . '/' . self::FOLDER
+        . '/' . self::WORKFLOWS_FOLDER
+        . '/' . self::WORKFLOW_RELEASE_PLEASE_FILE_NAME . '.stub';
 
     /**
      * Whether to include funding file by default.
@@ -67,5 +77,21 @@ final class GitHub
     public static function getWorkflowPackagistSyncFilePath(): string
     {
         return self::getWorkflowsPath() . '/' . self::WORKFLOW_PACKAGIST_SYNC_FILE_NAME;
+    }
+
+    /**
+     * Get the full path to the release please workflow file using the global base path.
+     */
+    public static function getWorkflowReleasePleaseFilePath(): string
+    {
+        return self::getWorkflowsPath() . '/' . self::WORKFLOW_RELEASE_PLEASE_FILE_NAME;
+    }
+
+    /**
+     * Get the full path to the Git Cliff configuration file using the global base path.
+     */
+    public static function getGitCliffFilePath(): string
+    {
+        return rtrim(ConfiguratorGlobals::getBasePath(), '/') . '/' . self::GIT_CLIFF_FILE_NAME;
     }
 }

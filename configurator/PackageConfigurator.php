@@ -20,6 +20,7 @@ use Configurator\Structure\PackageJson;
 
 final class PackageConfigurator
 {
+    public string $mainBranch = 'main';
     public string $authorName = '';
     public string $authorEmail = '';
     public string $authorUsername = '';
@@ -146,6 +147,8 @@ final class PackageConfigurator
         $this->license = $this->prompter->promptLicense();
         // Funding
         $this->includeFunding = $this->prompter->promptIncludeFunding();
+        // Main branch
+        $this->mainBranch = $this->prompter->promptMainBranchName();
     }
 
     /**
@@ -226,7 +229,7 @@ final class PackageConfigurator
             $pintJob = Tools::PINT_JOB;
         }
 
-        // Psalm jib
+        // Psalm job
         $psalmJob = '';
         if ($this->usePsalm) {
             $psalmJob = Tools::PSALM_JOB;
@@ -563,6 +566,14 @@ final class PackageConfigurator
             $maps[GitHub::WORKFLOW_PACKAGIST_SYNC_STUB] = [
                 GitHub::getWorkflowPackagistSyncFilePath(),
                 GitHub::getWorkflowsPath(),
+            ];
+            $maps[GitHub::WORKFLOW_RELEASE_PLEASE_STUB] = [
+                GitHub::getWorkflowReleasePleaseFilePath(),
+                GitHub::getWorkflowsPath(),
+            ];
+            $maps[GitHub::GIT_CLIFF_STUB] = [
+                GitHub::getGitCliffFilePath(),
+                null,
             ];
         }
 

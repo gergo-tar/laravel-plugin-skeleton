@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use SplFileInfo;
-use FilesystemIterator;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
-
-use Tests\TestPrompter;
+use Configurator\Options\LaravelVersionOptions;
+use Configurator\Options\PhpVersionOptions;
 use Configurator\PackageConfigurator;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use Tests\TestPrompter;
 
 function createDir(string $dir): void
 {
@@ -92,8 +93,8 @@ function configurationVariations(): array
             'description' => 'A minimal package',
             'license' => 'MIT',
             'include_funding' => false,
-            'php_version' => '^8.1',
-            'laravel_version' => '^10.0',
+            'php_version' => '^' . PhpVersionOptions::PHP_83,
+            'laravel_version' => '^' . LaravelVersionOptions::LARAVEL_13,
             'include_migration' => false,
             'include_config' => false,
             'include_routes' => false,
@@ -135,14 +136,38 @@ test('all configuration variations are tested and files generated as expected', 
             ? strtolower($expected['package_name'])
             : 'config';
 
-        $workflowFile = $tempDir . "/.github/workflows/tests.yml";
+        $workflowFile = $tempDir . "/.github/workflows/ci.yml";
         $workflowPackagistFile = $tempDir . "/.github/workflows/packagist-sync.yml";
-        if (isset($expected['include_tests']) && $expected['include_tests'] === true) {
+        $isCodeQualityToolSelected = (isset($expected['use_pint']) && $expected['use_pint'] === true)
+            || (isset($expected['use_phpstan']) && $expected['use_phpstan'] === true)
+            || (isset($expected['use_rector']) && $expected['use_rector'] === true);
+        $shouldIncludeWorkflow = (isset($expected['include_tests']) && $expected['include_tests'] === true)
+            || $isCodeQualityToolSelected;
+
+        if ($shouldIncludeWorkflow) {
             expect($workflowFile)->toBeFile();
             expect($workflowPackagistFile)->toBeFile();
         } else {
             expect($workflowFile)->not->toBeFile();
             expect($workflowPackagistFile)->not->toBeFile();
+        }
+
+        $workflowReleasePleaseFile = $tempDir . "/.github/workflows/release-please.yml";
+        $gitCliffFile = $tempDir . "/cliff.toml";
+        if ($shouldIncludeWorkflow) {
+            expect($workflowReleasePleaseFile)->toBeFile();
+            expect($gitCliffFile)->toBeFile();
+
+            $releasePleaseContent = file_get_contents($workflowReleasePleaseFile);
+            expect($releasePleaseContent)->toContain('name: Release Please');
+            expect($releasePleaseContent)->toContain('uses: googleapis/release-please-action@v4');
+
+            $gitCliffContent = file_get_contents($gitCliffFile);
+            expect($gitCliffContent)->toContain('# Changelog');
+            expect($gitCliffContent)->toContain('https://github.com/' . $expected['author_username'] . '/' . $package);
+        } else {
+            expect($workflowReleasePleaseFile)->not->toBeFile();
+            expect($gitCliffFile)->not->toBeFile();
         }
 
         $configFile = $tempDir . "/config/{$package}.php";

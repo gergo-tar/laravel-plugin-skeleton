@@ -88,6 +88,7 @@ final class ConfiguratorOutput
         ConfigUtil::writeln("License      : {$config->license}");
         ConfigUtil::writeln("PHP Version  : {$config->phpVersion}");
         ConfigUtil::writeln("Laravel      : {$config->laravelVersion}");
+        ConfigUtil::writeln("Git Branch   : {$config->mainBranch}");
         ConfigUtil::writeln('');
         ConfigUtil::writeln('Features:');
         ConfigUtil::writeln("  Migrations     : " . ($config->includeMigration ? 'yes' : 'no'));

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use InvalidArgumentException;
+use Configurator\Options\LaravelVersionOptions;
+use Configurator\Options\PhpVersionOptions;
 use Configurator\PrompterInterface;
+use InvalidArgumentException;
 
 /**
  * Test prompter for simulating prompt answers in tests.
@@ -86,13 +88,13 @@ final class TestPrompter implements PrompterInterface
     #[\Override]
     public function promptPhpVersion(): string
     {
-        return (string)$this->answer('php_version', '^8.2');
+        return (string)$this->answer('php_version', '^' . PhpVersionOptions::PHP_83);
     }
 
     #[\Override]
     public function promptLaravelVersion(): string
     {
-        return (string)$this->answer('laravel_version', '^11.0');
+        return (string)$this->answer('laravel_version', '^' . LaravelVersionOptions::LARAVEL_13);
     }
 
     #[\Override]
@@ -201,6 +203,12 @@ final class TestPrompter implements PrompterInterface
     public function promptCleanup(): bool
     {
         return (bool)$this->answer('cleanup', false);
+    }
+
+    #[\Override]
+    public function promptMainBranchName(): string
+    {
+        return (string)$this->answer('main_branch_name', 'main');
     }
 
     private function answer(string $key, string|bool|null $default = null): string|bool
