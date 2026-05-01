@@ -40,7 +40,7 @@
     "phpstan/phpstan": "^2.1",
     "squizlabs/php_codesniffer": "^4.0",
     "friendsofphp/php-cs-fixer": "^3.94",
-    "rector/rector": "^2.3",
+    "rector/rector": "^2.4",
     "vimeo/psalm": "^6.16"
   },
   "scripts": {
