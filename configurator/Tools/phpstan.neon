@@ -1,7 +1,8 @@
 parameters:
-    paths:
-        - src
-    level: 8
-    ignoreErrors:
-    excludePaths:
-    checkMissingIterableValueType: false
+  level: 8
+  paths:
+    - src
+  excludePaths:
+    - vendor
+    - node_modules
+  reportUnmatchedIgnoredErrors: false
