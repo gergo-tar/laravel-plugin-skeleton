@@ -61,7 +61,19 @@ on:
       - name: Run static analysis
         run: composer analyze
 
+:if_include_coverage_reporting
+      - name: Run test suite with coverage
+        run: ./vendor/bin/pest --ci --coverage --coverage-cobertura=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: false
+:else
       - name: Run test suite
         run: ./vendor/bin/pest --ci --no-coverage
+:endif_include_coverage_reporting
 :endif_include_tests
 :pint_job:phpstan_job:psalm_job

@@ -1,0 +1,13 @@
+# Security Policy
+
+## Supported Versions
+
+The latest stable release is supported with security updates.
+
+## Reporting a Vulnerability
+
+Please do not disclose security issues publicly.
+
+Report vulnerabilities by opening a private security advisory on GitHub or by contacting :author_email.
+
+Include as much detail as possible, including reproduction steps and impact.

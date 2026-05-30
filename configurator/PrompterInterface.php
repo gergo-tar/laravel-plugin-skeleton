@@ -23,6 +23,12 @@ interface PrompterInterface
     public function promptIncludeConfig(): bool;
     public function promptIncludeFacade(): bool;
     public function promptIncludeFunding(): bool;
+    public function promptIncludeCoverageReporting(): bool;
+    public function promptIncludeSecurityPolicy(): bool;
+    public function promptIncludeSupportPolicy(): bool;
+    public function promptIncludeCodeOfConduct(): bool;
+    public function promptIncludeIssueTemplates(): bool;
+    public function promptIncludePullRequestTemplate(): bool;
     public function promptIncludeMigration(): bool;
     public function promptIncludeRoutes(): bool;
     public function promptIncludeTests(): bool;

@@ -86,6 +86,42 @@ final class TestPrompter implements PrompterInterface
     }
 
     #[\Override]
+    public function promptIncludeCoverageReporting(): bool
+    {
+        return (bool)$this->answer('include_coverage_reporting', false);
+    }
+
+    #[\Override]
+    public function promptIncludeSecurityPolicy(): bool
+    {
+        return (bool)$this->answer('include_security_policy', false);
+    }
+
+    #[\Override]
+    public function promptIncludeSupportPolicy(): bool
+    {
+        return (bool)$this->answer('include_support_policy', false);
+    }
+
+    #[\Override]
+    public function promptIncludeCodeOfConduct(): bool
+    {
+        return (bool)$this->answer('include_code_of_conduct', false);
+    }
+
+    #[\Override]
+    public function promptIncludeIssueTemplates(): bool
+    {
+        return (bool)$this->answer('include_issue_templates', false);
+    }
+
+    #[\Override]
+    public function promptIncludePullRequestTemplate(): bool
+    {
+        return (bool)$this->answer('include_pull_request_template', false);
+    }
+
+    #[\Override]
     public function promptPhpVersion(): string
     {
         return (string)$this->answer('php_version', '^' . PhpVersionOptions::PHP_83);

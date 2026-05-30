@@ -20,7 +20,10 @@ final class Route
      */
     public static function createWebFile(): void
     {
-        file_put_contents(self::getWebFilePath(), "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your web routes here\n");
+        file_put_contents(
+            self::getWebFilePath(),
+            "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your web routes here\n"
+        );
     }
 
     /**
@@ -28,7 +31,10 @@ final class Route
      */
     public static function createApiFile(): void
     {
-        file_put_contents(self::getApiFilePath(), "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your API routes here\n");
+        file_put_contents(
+            self::getApiFilePath(),
+            "<?php\n\nuse Illuminate\\Support\\Facades\\Route;\n\n// Define your API routes here\n"
+        );
     }
 
     /**

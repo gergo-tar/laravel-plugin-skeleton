@@ -37,10 +37,16 @@ final class PackageConfigurator
     public bool $includeAssets = Resource::IS_ASSETS_INCLUDED;
     public bool $includeCommand = Src::IS_COMMAND_INCLUDED;
     public bool $includeConfig = Config::IS_CONFIG_INCLUDED;
+    public bool $includeCodeOfConduct = GitHub::IS_CODE_OF_CONDUCT_INCLUDED;
+    public bool $includeCoverageReporting = GitHub::IS_COVERAGE_REPORTING_INCLUDED;
     public bool $includeFacade = Src::IS_FACADE_INCLUDED;
     public bool $includeFunding = GitHub::IS_FUNDING_INCLUDED;
+    public bool $includeIssueTemplates = GitHub::IS_ISSUE_TEMPLATES_INCLUDED;
     public bool $includeMigration = Database::IS_MIGRATION_INCLUDED;
+    public bool $includePullRequestTemplate = GitHub::IS_PULL_REQUEST_TEMPLATE_INCLUDED;
     public bool $includeRoutes = Route::IS_ROUTES_INCLUDED;
+    public bool $includeSecurityPolicy = GitHub::IS_SECURITY_POLICY_INCLUDED;
+    public bool $includeSupportPolicy = GitHub::IS_SUPPORT_POLICY_INCLUDED;
     public bool $includeTests = Test::IS_TESTS_INCLUDED;
     public bool $includeTranslations = Resource::IS_TRANSLATIONS_INCLUDED;
     public bool $includeViews = Resource::IS_VIEWS_INCLUDED;
@@ -86,6 +92,9 @@ final class PackageConfigurator
 
         ConfiguratorOutput::printDevToolSelections();
         $this->collectDevToolSelections();
+
+        ConfiguratorOutput::printGitHubIntegrationSelections();
+        $this->collectGitHubIntegrationSelections();
 
         ConfiguratorOutput::printSummary($this);
         if (!$this->prompter->promptProceed()) {
@@ -145,10 +154,6 @@ final class PackageConfigurator
         $this->description = $this->prompter->promptDescription("This is my package {$this->packageName}");
         // License
         $this->license = $this->prompter->promptLicense();
-        // Funding
-        $this->includeFunding = $this->prompter->promptIncludeFunding();
-        // Main branch
-        $this->mainBranch = $this->prompter->promptMainBranchName();
     }
 
     /**
@@ -160,6 +165,7 @@ final class PackageConfigurator
     {
         $this->phpVersion = $this->prompter->promptPhpVersion();
         $this->laravelVersion = $this->prompter->promptLaravelVersion();
+        $this->mainBranch = $this->prompter->promptMainBranchName();
     }
 
     /**
@@ -198,6 +204,22 @@ final class PackageConfigurator
         $this->usePhpStan = $this->prompter->promptEnablePhpStan();
         $this->usePsalm = $this->prompter->promptEnablePsalm();
         $this->useRector = $this->prompter->promptEnableRector();
+        $this->includeCoverageReporting = $this->prompter->promptIncludeCoverageReporting();
+    }
+
+    /**
+     * Collect GitHub integration selections.
+     *
+     * Includes funding, security policy, support policy, code of conduct, issue templates, and PR template.
+     */
+    public function collectGitHubIntegrationSelections(): void
+    {
+        $this->includeFunding = $this->prompter->promptIncludeFunding();
+        $this->includeSecurityPolicy = $this->prompter->promptIncludeSecurityPolicy();
+        $this->includeSupportPolicy = $this->prompter->promptIncludeSupportPolicy();
+        $this->includeCodeOfConduct = $this->prompter->promptIncludeCodeOfConduct();
+        $this->includeIssueTemplates = $this->prompter->promptIncludeIssueTemplates();
+        $this->includePullRequestTemplate = $this->prompter->promptIncludePullRequestTemplate();
     }
 
     /**
@@ -266,9 +288,11 @@ final class PackageConfigurator
                         ':pint_job' => $pintJob,
                         ':psalm_job' => $psalmJob,
                         ':license' => $this->license,
+                        ':main_branch' => $this->mainBranch,
                         ':code_quality_tools' => $this->getCodeQualityTools(),
                         ':command_class' => $this->includeCommand
-                            ? "\\{$this->vendorNamespace}\\{$this->className}\\Commands\\{$this->className}Command::class"
+                            ? "\\{$this->vendorNamespace}\\{$this->className}\\Commands\\" .
+                            "{$this->className}Command::class"
                             : '',
                     ]);
                 } elseif ($dest) {
@@ -306,8 +330,10 @@ final class PackageConfigurator
                 'include_migration' => $this->includeMigration,
                 'include_translations' => $this->includeTranslations,
                 'include_views'     => $this->includeViews,
-                'include_api_routes' => $this->includeRoutes && ($this->routeType === 'api' || $this->routeType === 'both'),
-                'include_web_routes' => $this->includeRoutes && ($this->routeType === 'web' || $this->routeType === 'both'),
+                'include_api_routes' => $this->includeRoutes &&
+                    ($this->routeType === 'api' || $this->routeType === 'both'),
+                'include_web_routes' => $this->includeRoutes &&
+                    ($this->routeType === 'web' || $this->routeType === 'both'),
             ]
         );
     }
@@ -328,6 +354,11 @@ final class PackageConfigurator
                 'include_tests'     => $this->includeTests,
                 'include_workflow'   => $this->includeTests || $isCodeQualityToolSelected,
                 'include_code_quality_tools' => $isCodeQualityToolSelected,
+                'include_coverage_reporting' => $this->includeCoverageReporting,
+                'include_pint'       => $this->usePint,
+                'include_phpstan'    => $this->usePhpStan,
+                'include_psalm'      => $this->usePsalm,
+                'include_rector'     => $this->useRector,
             ]
         );
     }
@@ -342,6 +373,7 @@ final class PackageConfigurator
                 GitHub::getWorkflowFilePath(),
                 [
                     'include_tests' => $this->includeTests,
+                    'include_coverage_reporting' => $this->includeCoverageReporting,
                 ]
             );
         }
@@ -579,6 +611,36 @@ final class PackageConfigurator
 
         if ($this->includeFunding) {
             $maps[GitHub::FUNDING_STUB] = [GitHub::getPath() . '/' . GitHub::FUNDING_FILE_NAME, GitHub::getPath()];
+        }
+
+        if ($this->includeSecurityPolicy) {
+            $maps[GitHub::SECURITY_STUB] = [GitHub::getSecurityFilePath(), GitHub::getPath()];
+        }
+
+        if ($this->includeSupportPolicy) {
+            $maps[GitHub::SUPPORT_STUB] = [GitHub::getSupportFilePath(), GitHub::getPath()];
+        }
+
+        if ($this->includeCodeOfConduct) {
+            $maps[GitHub::CODE_OF_CONDUCT_STUB] = [GitHub::getCodeOfConductFilePath(), GitHub::getPath()];
+        }
+
+        if ($this->includeIssueTemplates) {
+            $maps[GitHub::ISSUE_TEMPLATE_BUG_STUB] = [
+                GitHub::getIssueTemplateBugFilePath(),
+                GitHub::getIssueTemplatesPath(),
+            ];
+            $maps[GitHub::ISSUE_TEMPLATE_FEATURE_STUB] = [
+                GitHub::getIssueTemplateFeatureFilePath(),
+                GitHub::getIssueTemplatesPath(),
+            ];
+        }
+
+        if ($this->includePullRequestTemplate) {
+            $maps[GitHub::PULL_REQUEST_TEMPLATE_STUB] = [
+                GitHub::getPullRequestTemplateFilePath(),
+                GitHub::getPath(),
+            ];
         }
 
         if ($this->useCommitLint) {
