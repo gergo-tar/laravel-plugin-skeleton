@@ -72,6 +72,16 @@ final class ConfiguratorOutput
     }
 
     /**
+     * Print the GitHub integration section.
+     */
+    public static function printGitHubIntegrationSelections(): void
+    {
+        ConfigUtil::writeln('');
+        ConfigUtil::writeln('🐙 GitHub Integration');
+        ConfigUtil::writeln('────────────────────────────────────────────────────────────────');
+    }
+
+    /**
      * Print the configuration summary.
      * @param PackageConfigurator $config The package configuration
      */
@@ -88,6 +98,7 @@ final class ConfiguratorOutput
         ConfigUtil::writeln("License      : {$config->license}");
         ConfigUtil::writeln("PHP Version  : {$config->phpVersion}");
         ConfigUtil::writeln("Laravel      : {$config->laravelVersion}");
+        ConfigUtil::writeln("Git Branch   : {$config->mainBranch}");
         ConfigUtil::writeln('');
         ConfigUtil::writeln('Features:');
         ConfigUtil::writeln("  Migrations     : " . ($config->includeMigration ? 'yes' : 'no'));
@@ -106,6 +117,15 @@ final class ConfiguratorOutput
         ConfigUtil::writeln("  PHPStan        : " . ($config->usePhpStan ? 'yes' : 'no'));
         ConfigUtil::writeln("  Rector         : " . ($config->useRector ? 'yes' : 'no'));
         ConfigUtil::writeln("  Psalm          : " . ($config->usePsalm ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Coverage       : " . ($config->includeCoverageReporting ? 'yes (Codecov)' : 'no'));
+        ConfigUtil::writeln('');
+        ConfigUtil::writeln('GitHub Integration:');
+        ConfigUtil::writeln("  Funding        : " . ($config->includeFunding ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Security Policy: " . ($config->includeSecurityPolicy ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Support Policy : " . ($config->includeSupportPolicy ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Code of Conduct: " . ($config->includeCodeOfConduct ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Issue Templates: " . ($config->includeIssueTemplates ? 'yes' : 'no'));
+        ConfigUtil::writeln("  PR Template    : " . ($config->includePullRequestTemplate ? 'yes' : 'no'));
         ConfigUtil::writeln('══════════════════════════════════════════════════════════════');
         ConfigUtil::writeln('');
     }

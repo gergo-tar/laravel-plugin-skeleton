@@ -113,7 +113,10 @@ final class ConfiguratorPrompter implements PrompterInterface
     #[\Override]
     public function promptEnableCommitLint(): bool
     {
-        return ConfigUtil::confirm('Use commitlint, commitizen and semantic versioning?', PackageJson::IS_COMMITLINT_INCLUDED);
+        return ConfigUtil::confirm(
+            'Use commitlint, commitizen and semantic versioning?',
+            PackageJson::IS_COMMITLINT_INCLUDED
+        );
     }
 
     /**
@@ -207,6 +210,66 @@ final class ConfiguratorPrompter implements PrompterInterface
     }
 
     /**
+     * Prompt whether to enable coverage reporting (Codecov).
+     * @return bool True to enable coverage reporting, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeCoverageReporting(): bool
+    {
+        return ConfigUtil::confirm('Enable coverage reporting (Codecov)?', GitHub::IS_COVERAGE_REPORTING_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include a security policy.
+     * @return bool True to include SECURITY.md, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeSecurityPolicy(): bool
+    {
+        return ConfigUtil::confirm('Include security policy (SECURITY.md)?', GitHub::IS_SECURITY_POLICY_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include support policy.
+     * @return bool True to include SUPPORT.md, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeSupportPolicy(): bool
+    {
+        return ConfigUtil::confirm('Include support policy (SUPPORT.md)?', GitHub::IS_SUPPORT_POLICY_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include a code of conduct.
+     * @return bool True to include CODE_OF_CONDUCT.md, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeCodeOfConduct(): bool
+    {
+        return ConfigUtil::confirm('Include code of conduct?', GitHub::IS_CODE_OF_CONDUCT_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include issue templates.
+     * @return bool True to include issue templates, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeIssueTemplates(): bool
+    {
+        return ConfigUtil::confirm('Include GitHub issue templates?', GitHub::IS_ISSUE_TEMPLATES_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include pull request template.
+     * @return bool True to include pull request template, false otherwise
+     */
+    #[\Override]
+    public function promptIncludePullRequestTemplate(): bool
+    {
+        return ConfigUtil::confirm('Include pull request template?', GitHub::IS_PULL_REQUEST_TEMPLATE_INCLUDED);
+    }
+
+    /**
      * Prompt whether to include migrations.
      * @return bool True to include migrations, false otherwise
      */
@@ -257,6 +320,36 @@ final class ConfiguratorPrompter implements PrompterInterface
     }
 
     /**
+     * Prompt whether to include all features at once.
+     * @return bool True to include all features, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllFeatures(): bool
+    {
+        return ConfigUtil::confirm('Include ALL features?', false);
+    }
+
+    /**
+     * Prompt whether to enable all development tools at once.
+     * @return bool True to enable all tools, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllDevTools(): bool
+    {
+        return ConfigUtil::confirm('Enable ALL development tools?', false);
+    }
+
+    /**
+     * Prompt whether to include all GitHub integrations at once.
+     * @return bool True to include all integrations, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllGitHubIntegrations(): bool
+    {
+        return ConfigUtil::confirm('Include ALL GitHub integrations?', false);
+    }
+
+    /**
      * Prompt for the Laravel version support.
      * @return string The Laravel version
      */
@@ -282,6 +375,16 @@ final class ConfiguratorPrompter implements PrompterInterface
             LicenseOptions::OPTIONS,
             LicenseOptions::DEFAULT
         );
+    }
+
+    /**
+     * Prompt for the main branch name (e.g., main, master, trunk).
+     * @return string The main branch name
+     */
+    #[\Override]
+    public function promptMainBranchName(): string
+    {
+        return ConfigUtil::ask('Main branch name', 'main');
     }
 
     /**

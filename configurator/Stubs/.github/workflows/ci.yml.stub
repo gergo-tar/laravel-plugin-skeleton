@@ -1,0 +1,79 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - :main_branch
+  pull_request:
+    branches:
+      - :main_branch
+
+:if_include_tests
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        php: [:php_version_comma_separated]
+        laravel: [:laravel_version_number]
+        stability: [prefer-stable]
+        include:
+          - laravel: :laravel_version_number
+            testbench: :testbench_version
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: List installed dependencies
+        run: composer show -D
+
+      - name: Run static analysis
+        run: composer analyze
+
+:if_include_coverage_reporting
+      - name: Run test suite with coverage
+        run: ./vendor/bin/pest --ci --coverage --coverage-cobertura=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: false
+:else
+      - name: Run test suite
+        run: ./vendor/bin/pest --ci --no-coverage
+:endif_include_coverage_reporting
+:endif_include_tests
+:pint_job:phpstan_job:psalm_job

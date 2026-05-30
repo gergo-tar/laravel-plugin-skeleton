@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use SplFileInfo;
-use FilesystemIterator;
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
-
-use Tests\TestPrompter;
+use Configurator\Options\LaravelVersionOptions;
+use Configurator\Options\PhpVersionOptions;
 use Configurator\PackageConfigurator;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use Tests\TestPrompter;
 
 function createDir(string $dir): void
 {
@@ -59,7 +60,14 @@ function configurationVariations(): array
             'class_name' => 'TestPackage',
             'description' => 'A test package',
             'license' => 'MIT',
+            'main_branch_name' => 'trunk',
             'include_funding' => true,
+            'include_coverage_reporting' => true,
+            'include_security_policy' => true,
+            'include_support_policy' => true,
+            'include_code_of_conduct' => true,
+            'include_issue_templates' => true,
+            'include_pull_request_template' => true,
             'php_version' => '^8.2',
             'laravel_version' => '^11.0',
             'include_migration' => true,
@@ -81,6 +89,49 @@ function configurationVariations(): array
             'composer_install' => false,
             'cleanup' => false,
         ],
+        'select all' => [
+            'author_name' => 'All User',
+            'author_email' => 'all@example.com',
+            'author_username' => 'alluser',
+            'vendor_name' => 'AllVendor',
+            'vendor_namespace' => 'AllVendor',
+            'package_name' => 'AllPackage',
+            'class_name' => 'AllPackage',
+            'description' => 'A full package via select-all',
+            'license' => 'MIT',
+            'main_branch_name' => 'main',
+            'php_version' => '^8.3',
+            'laravel_version' => '^13',
+            'select_all_features' => true,
+            'select_all_dev_tools' => true,
+            'select_all_github_integrations' => true,
+            // expected outcomes used by test assertions
+            'include_migration' => true,
+            'include_config' => true,
+            'include_routes' => true,
+            'route_type' => 'both',
+            'include_translations' => true,
+            'include_assets' => true,
+            'include_views' => true,
+            'include_command' => true,
+            'include_facade' => true,
+            'include_tests' => true,
+            'use_commitlint' => true,
+            'use_pint' => true,
+            'use_phpstan' => true,
+            'use_rector' => true,
+            'use_psalm' => true,
+            'include_coverage_reporting' => true,
+            'include_funding' => true,
+            'include_security_policy' => true,
+            'include_support_policy' => true,
+            'include_code_of_conduct' => true,
+            'include_issue_templates' => true,
+            'include_pull_request_template' => true,
+            'proceed' => true,
+            'composer_install' => false,
+            'cleanup' => false,
+        ],
         'minimal features' => [
             'author_name' => 'Minimal User',
             'author_email' => 'minimal@example.com',
@@ -91,9 +142,16 @@ function configurationVariations(): array
             'class_name' => 'MinimalPackage',
             'description' => 'A minimal package',
             'license' => 'MIT',
+            'main_branch_name' => 'main',
             'include_funding' => false,
-            'php_version' => '^8.1',
-            'laravel_version' => '^10.0',
+            'include_coverage_reporting' => false,
+            'include_security_policy' => false,
+            'include_support_policy' => false,
+            'include_code_of_conduct' => false,
+            'include_issue_templates' => false,
+            'include_pull_request_template' => false,
+            'php_version' => '^' . PhpVersionOptions::PHP_83,
+            'laravel_version' => '^' . LaravelVersionOptions::LARAVEL_13,
             'include_migration' => false,
             'include_config' => false,
             'include_routes' => false,
@@ -134,15 +192,70 @@ test('all configuration variations are tested and files generated as expected', 
         $package = isset($expected['package_name']) && is_string($expected['package_name'])
             ? strtolower($expected['package_name'])
             : 'config';
+        $mainBranch = isset($expected['main_branch_name']) && is_string($expected['main_branch_name'])
+            ? $expected['main_branch_name']
+            : 'main';
 
-        $workflowFile = $tempDir . "/.github/workflows/tests.yml";
-        $workflowPackagistFile = $tempDir . "/.github/workflows/packagist-sync.yml";
-        if (isset($expected['include_tests']) && $expected['include_tests'] === true) {
+        $workflowFile = $tempDir . "/.github/workflows/ci.yml";
+        $isCodeQualityToolSelected = (isset($expected['use_pint']) && $expected['use_pint'] === true)
+            || (isset($expected['use_phpstan']) && $expected['use_phpstan'] === true)
+            || (isset($expected['use_rector']) && $expected['use_rector'] === true);
+        $shouldIncludeWorkflow = (isset($expected['include_tests']) && $expected['include_tests'] === true)
+            || $isCodeQualityToolSelected;
+
+        if ($shouldIncludeWorkflow) {
             expect($workflowFile)->toBeFile();
-            expect($workflowPackagistFile)->toBeFile();
+
+            $workflowContent = file_get_contents($workflowFile);
+            expect($workflowContent)->toContain('- ' . $mainBranch);
+            expect($workflowContent)->not->toContain(':main_branch');
+
+            if (isset($expected['include_coverage_reporting']) && $expected['include_coverage_reporting'] === true) {
+                expect($workflowContent)->toContain('codecov/codecov-action');
+            } else {
+                expect($workflowContent)->not->toContain('codecov/codecov-action');
+            }
         } else {
             expect($workflowFile)->not->toBeFile();
-            expect($workflowPackagistFile)->not->toBeFile();
+        }
+
+        $workflowReleasePleaseFile = $tempDir . "/.github/workflows/release-please.yml";
+        $gitCliffFile = $tempDir . "/cliff.toml";
+        if ($shouldIncludeWorkflow) {
+            expect($workflowReleasePleaseFile)->toBeFile();
+            expect($gitCliffFile)->toBeFile();
+
+            $releasePleaseContent = file_get_contents($workflowReleasePleaseFile);
+            expect($releasePleaseContent)->toContain('name: Release Please');
+            expect($releasePleaseContent)->toContain('uses: googleapis/release-please-action@v4');
+            expect($releasePleaseContent)->toContain('origin/' . $mainBranch);
+            expect($releasePleaseContent)->not->toContain(':main_branch');
+
+            $gitCliffContent = file_get_contents($gitCliffFile);
+            expect($gitCliffContent)->toContain('# Changelog');
+            $authorUsername = isset($expected['author_username']) && is_string($expected['author_username'])
+                ? $expected['author_username']
+                : '';
+            expect($gitCliffContent)->toContain('https://github.com/' . $authorUsername . '/' . $package);
+
+            $readmeFile = $tempDir . '/README.md';
+            $readmeContent = file_get_contents($readmeFile);
+            expect($readmeContent)->toContain('branch=' . $mainBranch);
+            expect($readmeContent)->toContain('branch%3A' . $mainBranch);
+            expect($readmeContent)->not->toContain(':main_branch');
+
+            if (isset($expected['include_coverage_reporting']) && $expected['include_coverage_reporting'] === true) {
+                expect($readmeContent)->toContain('codecov.io/gh/');
+            } else {
+                expect($readmeContent)->not->toContain('codecov.io');
+            }
+        } else {
+            expect($workflowReleasePleaseFile)->not->toBeFile();
+            expect($gitCliffFile)->not->toBeFile();
+
+            $readmeFile = $tempDir . '/README.md';
+            $readmeContent = file_get_contents($readmeFile);
+            expect($readmeContent)->not->toContain('codecov.io');
         }
 
         $configFile = $tempDir . "/config/{$package}.php";
@@ -225,6 +338,44 @@ test('all configuration variations are tested and files generated as expected', 
             expect($unitTest)->not->toBeFile();
         }
 
+        $securityFile = $tempDir . '/.github/SECURITY.md';
+        if (isset($expected['include_security_policy']) && $expected['include_security_policy'] === true) {
+            expect($securityFile)->toBeFile();
+        } else {
+            expect($securityFile)->not->toBeFile();
+        }
+
+        $supportFile = $tempDir . '/.github/SUPPORT.md';
+        if (isset($expected['include_support_policy']) && $expected['include_support_policy'] === true) {
+            expect($supportFile)->toBeFile();
+        } else {
+            expect($supportFile)->not->toBeFile();
+        }
+
+        $codeOfConductFile = $tempDir . '/.github/CODE_OF_CONDUCT.md';
+        if (isset($expected['include_code_of_conduct']) && $expected['include_code_of_conduct'] === true) {
+            expect($codeOfConductFile)->toBeFile();
+        } else {
+            expect($codeOfConductFile)->not->toBeFile();
+        }
+
+        $pullRequestTemplateFile = $tempDir . '/.github/pull_request_template.md';
+        if (isset($expected['include_pull_request_template']) && $expected['include_pull_request_template'] === true) {
+            expect($pullRequestTemplateFile)->toBeFile();
+        } else {
+            expect($pullRequestTemplateFile)->not->toBeFile();
+        }
+
+        $bugIssueTemplateFile = $tempDir . '/.github/ISSUE_TEMPLATE/bug_report.yml';
+        $featureIssueTemplateFile = $tempDir . '/.github/ISSUE_TEMPLATE/feature_request.yml';
+        if (isset($expected['include_issue_templates']) && $expected['include_issue_templates'] === true) {
+            expect($bugIssueTemplateFile)->toBeFile();
+            expect($featureIssueTemplateFile)->toBeFile();
+        } else {
+            expect($bugIssueTemplateFile)->not->toBeFile();
+            expect($featureIssueTemplateFile)->not->toBeFile();
+        }
+
         $packageJsonFile = $tempDir . "/package.json";
         $commitLintFile = $tempDir . "/commitlint.config.js";
         if (isset($expected['use_commitlint']) && $expected['use_commitlint'] === true) {
@@ -236,6 +387,19 @@ test('all configuration variations are tested and files generated as expected', 
         } else {
             expect($packageJsonFile)->not->toBeFile();
             expect($commitLintFile)->not->toBeFile();
+        }
+
+        $composerJsonFile = $tempDir . '/composer.json';
+        expect($composerJsonFile)->toBeFile();
+        $composerJsonContent = file_get_contents($composerJsonFile);
+
+        if (isset($expected['include_tests']) && $expected['include_tests'] === true) {
+            expect($composerJsonContent)->toContain('"orchestra/testbench"');
+            expect($composerJsonContent)->toContain('"test": "vendor/bin/pest"');
+        } else {
+            expect($composerJsonContent)->not->toContain('"orchestra/testbench"');
+            expect($composerJsonContent)->not->toContain('"test": "vendor/bin/pest"');
+            expect($composerJsonContent)->not->toContain('"test-coverage": "vendor/bin/pest --coverage"');
         }
 
         $pintFile = $tempDir . "/pint.json";

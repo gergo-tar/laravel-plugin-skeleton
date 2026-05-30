@@ -47,26 +47,20 @@ final class Composer
 
     /**
      * Get the corresponding Testbench version for a given Laravel version.
-     * @param string $laravelVersion The Laravel version string (e.g. '^10.0', '11.0', '12.0')
+     * @param string $laravelVersion The Laravel version string (e.g. '^11', '^12', '^13')
      * @return string The corresponding Testbench version string
      */
     public static function getTestbenchVersion(string $laravelVersion): string
     {
         $verNum = preg_replace('/[^0-9]+/', '', $laravelVersion);
 
-        if ($verNum === '10') {
-            return '8.*';
-        }
-
-        if ($verNum === '11') {
-            return '9.*';
-        }
-
-        if ($verNum === '12') {
-            return '10.*';
-        }
-
-        return '8.*';
+        return match ($verNum) {
+            '10' => '8.*',
+            '11' => '9.*',
+            '12' => '10.*',
+            '13' => '11.*',
+            default => '11.*',
+        };
     }
 
     /**

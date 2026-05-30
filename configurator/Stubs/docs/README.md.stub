@@ -5,7 +5,8 @@ This is the :package_name package.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/:author_username/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:author_username/:package_slug)
 [![Total Downloads](https://img.shields.io/packagist/dt/:author_username/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:author_username/:package_slug)
-:if_include_workflow[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/:author_username/:package_slug/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:author_username/:package_slug/actions?query=workflow%3Atests+branch%3Amain):endif_include_workflow
+:if_include_workflow[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/:author_username/:package_slug/ci.yml?branch=:main_branch&label=tests&style=flat-square)](https://github.com/:author_username/:package_slug/actions?query=workflow%3Aci+branch%3A:main_branch):endif_include_workflow
+:if_include_coverage_reporting[![Codecov](https://img.shields.io/codecov/c/github/:author_username/:package_slug?style=flat-square)](https://codecov.io/gh/:author_username/:package_slug):endif_include_coverage_reporting
 
 ---
 
@@ -68,6 +69,30 @@ Run tests with Pest:
 composer test
 ```
 :endif_include_tests
+
+:if_include_code_quality_tools## 🔍 Code Quality
+
+:if_include_pint
+```bash
+composer format   # Run Pint code style fixer
+```
+:endif_include_pint
+:if_include_phpstan
+```bash
+composer stan     # Run PHPStan static analysis
+```
+:endif_include_phpstan
+:if_include_psalm
+```bash
+composer psalm    # Run Psalm static analysis
+```
+:endif_include_psalm
+:if_include_rector
+```bash
+composer rector   # Run Rector refactoring
+```
+:endif_include_rector
+:endif_include_code_quality_tools
 
 :if_include_workflow## 🔄 Continuous Integration
 

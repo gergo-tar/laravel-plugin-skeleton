@@ -1,6 +1,13 @@
 {
-    "preset": "laravel",
-    "rules": {
-        "declare_strict_types": true
-    }
+  "preset": "laravel",
+  "rules": {
+    "@PSR12": true,
+    "single_quote": true,
+    "trailing_comma_in_multiline": false,
+    "no_unused_imports": true,
+    "ordered_imports": true,
+    "no_trailing_whitespace": true,
+    "line_ending": true
+  },
+  "exclude": ["vendor", "node_modules", "docs"]
 }

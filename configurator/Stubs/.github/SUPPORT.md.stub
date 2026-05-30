@@ -1,0 +1,17 @@
+# Support
+
+## Questions and Help
+
+For usage questions, open a GitHub Discussion or issue in this repository.
+
+## Bug Reports
+
+If you found a bug, open an issue and include:
+- package version
+- PHP version
+- Laravel version
+- reproduction steps
+
+## Security Issues
+
+Please follow the security reporting instructions in SECURITY.md.

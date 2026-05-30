@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use InvalidArgumentException;
+use Configurator\Options\LaravelVersionOptions;
+use Configurator\Options\PhpVersionOptions;
 use Configurator\PrompterInterface;
+use InvalidArgumentException;
 
 /**
  * Test prompter for simulating prompt answers in tests.
@@ -84,15 +86,51 @@ final class TestPrompter implements PrompterInterface
     }
 
     #[\Override]
+    public function promptIncludeCoverageReporting(): bool
+    {
+        return (bool)$this->answer('include_coverage_reporting', false);
+    }
+
+    #[\Override]
+    public function promptIncludeSecurityPolicy(): bool
+    {
+        return (bool)$this->answer('include_security_policy', false);
+    }
+
+    #[\Override]
+    public function promptIncludeSupportPolicy(): bool
+    {
+        return (bool)$this->answer('include_support_policy', false);
+    }
+
+    #[\Override]
+    public function promptIncludeCodeOfConduct(): bool
+    {
+        return (bool)$this->answer('include_code_of_conduct', false);
+    }
+
+    #[\Override]
+    public function promptIncludeIssueTemplates(): bool
+    {
+        return (bool)$this->answer('include_issue_templates', false);
+    }
+
+    #[\Override]
+    public function promptIncludePullRequestTemplate(): bool
+    {
+        return (bool)$this->answer('include_pull_request_template', false);
+    }
+
+    #[\Override]
     public function promptPhpVersion(): string
     {
-        return (string)$this->answer('php_version', '^8.2');
+        return (string)$this->answer('php_version', '^' . PhpVersionOptions::PHP_83);
     }
 
     #[\Override]
     public function promptLaravelVersion(): string
     {
-        return (string)$this->answer('laravel_version', '^11.0');
+        return (string)$this->answer('laravel_version', '^' . LaravelVersionOptions::LARAVEL_13);
     }
 
     #[\Override]
@@ -201,6 +239,30 @@ final class TestPrompter implements PrompterInterface
     public function promptCleanup(): bool
     {
         return (bool)$this->answer('cleanup', false);
+    }
+
+    #[\Override]
+    public function promptMainBranchName(): string
+    {
+        return (string)$this->answer('main_branch_name', 'main');
+    }
+
+    #[\Override]
+    public function promptSelectAllFeatures(): bool
+    {
+        return (bool)$this->answer('select_all_features', false);
+    }
+
+    #[\Override]
+    public function promptSelectAllDevTools(): bool
+    {
+        return (bool)$this->answer('select_all_dev_tools', false);
+    }
+
+    #[\Override]
+    public function promptSelectAllGitHubIntegrations(): bool
+    {
+        return (bool)$this->answer('select_all_github_integrations', false);
     }
 
     private function answer(string $key, string|bool|null $default = null): string|bool
