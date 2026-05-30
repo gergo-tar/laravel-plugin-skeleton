@@ -106,6 +106,7 @@ final class PackageConfigurator
         $this->processStubsAndFiles();
 
         $this->updateComposerJson();
+        $this->handleTestingSelection();
         $this->updateReadmeFile();
         $this->updateServiceProviderFile();
 
@@ -175,6 +176,20 @@ final class PackageConfigurator
      */
     public function collectFeatureSelections(): void
     {
+        if ($this->prompter->promptSelectAllFeatures()) {
+            $this->includeMigration = true;
+            $this->includeConfig = true;
+            $this->includeRoutes = true;
+            $this->routeType = 'both';
+            $this->includeTranslations = true;
+            $this->includeAssets = true;
+            $this->includeViews = true;
+            $this->includeCommand = true;
+            $this->includeFacade = true;
+            $this->includeTests = true;
+            return;
+        }
+
         $this->includeMigration = $this->prompter->promptIncludeMigration();
         $this->includeConfig = $this->prompter->promptIncludeConfig();
 
@@ -199,6 +214,16 @@ final class PackageConfigurator
      */
     public function collectDevToolSelections(): void
     {
+        if ($this->prompter->promptSelectAllDevTools()) {
+            $this->useCommitLint = true;
+            $this->usePint = true;
+            $this->usePhpStan = true;
+            $this->usePsalm = true;
+            $this->useRector = true;
+            $this->includeCoverageReporting = true;
+            return;
+        }
+
         $this->useCommitLint = $this->prompter->promptEnableCommitLint();
         $this->usePint = $this->prompter->promptEnablePint();
         $this->usePhpStan = $this->prompter->promptEnablePhpStan();
@@ -214,6 +239,16 @@ final class PackageConfigurator
      */
     public function collectGitHubIntegrationSelections(): void
     {
+        if ($this->prompter->promptSelectAllGitHubIntegrations()) {
+            $this->includeFunding = true;
+            $this->includeSecurityPolicy = true;
+            $this->includeSupportPolicy = true;
+            $this->includeCodeOfConduct = true;
+            $this->includeIssueTemplates = true;
+            $this->includePullRequestTemplate = true;
+            return;
+        }
+
         $this->includeFunding = $this->prompter->promptIncludeFunding();
         $this->includeSecurityPolicy = $this->prompter->promptIncludeSecurityPolicy();
         $this->includeSupportPolicy = $this->prompter->promptIncludeSupportPolicy();
@@ -291,8 +326,8 @@ final class PackageConfigurator
                         ':main_branch' => $this->mainBranch,
                         ':code_quality_tools' => $this->getCodeQualityTools(),
                         ':command_class' => $this->includeCommand
-                            ? "\\{$this->vendorNamespace}\\{$this->className}\\Commands\\" .
-                            "{$this->className}Command::class"
+                            ? "\\{$this->vendorNamespace}\\{$this->className}\\Commands\\"
+                            . "{$this->className}Command::class"
                             : '',
                     ]);
                 } elseif ($dest) {
@@ -330,10 +365,10 @@ final class PackageConfigurator
                 'include_migration' => $this->includeMigration,
                 'include_translations' => $this->includeTranslations,
                 'include_views'     => $this->includeViews,
-                'include_api_routes' => $this->includeRoutes &&
-                    ($this->routeType === 'api' || $this->routeType === 'both'),
-                'include_web_routes' => $this->includeRoutes &&
-                    ($this->routeType === 'web' || $this->routeType === 'both'),
+                'include_api_routes' => $this->includeRoutes
+                    && ($this->routeType === 'api' || $this->routeType === 'both'),
+                'include_web_routes' => $this->includeRoutes
+                    && ($this->routeType === 'web' || $this->routeType === 'both'),
             ]
         );
     }
@@ -414,6 +449,27 @@ final class PackageConfigurator
     }
 
     /**
+     * Remove test-related dependencies and scripts when tests are disabled.
+     */
+    private function handleTestingSelection(): void
+    {
+        if ($this->includeTests) {
+            return;
+        }
+
+        Composer::removeComposerDeps([
+            'mockery/mockery',
+            'nunomaduro/collision',
+            'orchestra/testbench',
+            'pestphp/pest',
+            'pestphp/pest-plugin-laravel',
+        ]);
+
+        Composer::removeComposerScript('test');
+        Composer::removeComposerScript('test-coverage');
+    }
+
+    /**
      * Handle development tool setup based on selections.
      *
      * This includes setting up PHPStan, Pint, and Rector.
@@ -442,15 +498,23 @@ final class PackageConfigurator
             // Remove the composer.lock file if it exists
             ConfigUtil::deleteFileIfExists($this->basePath . '/composer.lock');
 
-            exec('composer install');
-            if ($this->usePsalm) {
-                exec('./vendor/bin/psalm --init');
-            }
+            $composerExitCode = 0;
+            exec('composer install', $unusedOutput, $composerExitCode);
 
-            if ($this->useCommitLint) {
-                ConfigUtil::deleteFolderRecursively($this->basePath . '/node_modules');
-                ConfigUtil::deleteFileIfExists($this->basePath . '/package-lock.json');
-                exec('npm install');
+            if ($composerExitCode === 0) {
+                if ($this->usePsalm && file_exists($this->basePath . '/vendor/bin/psalm')) {
+                    exec('./vendor/bin/psalm --init');
+                }
+
+                if ($this->useCommitLint) {
+                    ConfigUtil::deleteFolderRecursively($this->basePath . '/node_modules');
+                    ConfigUtil::deleteFileIfExists($this->basePath . '/package-lock.json');
+                    exec('npm install');
+                }
+            } else {
+                ConfigUtil::writeln(
+                    '⚠️ composer install failed. Skipping post-install steps (psalm init, npm install).'
+                );
             }
         }
 
@@ -595,10 +659,6 @@ final class PackageConfigurator
         }
 
         if ($this->includeWorkflow) {
-            $maps[GitHub::WORKFLOW_PACKAGIST_SYNC_STUB] = [
-                GitHub::getWorkflowPackagistSyncFilePath(),
-                GitHub::getWorkflowsPath(),
-            ];
             $maps[GitHub::WORKFLOW_RELEASE_PLEASE_STUB] = [
                 GitHub::getWorkflowReleasePleaseFilePath(),
                 GitHub::getWorkflowsPath(),

@@ -320,6 +320,36 @@ final class ConfiguratorPrompter implements PrompterInterface
     }
 
     /**
+     * Prompt whether to include all features at once.
+     * @return bool True to include all features, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllFeatures(): bool
+    {
+        return ConfigUtil::confirm('Include ALL features?', false);
+    }
+
+    /**
+     * Prompt whether to enable all development tools at once.
+     * @return bool True to enable all tools, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllDevTools(): bool
+    {
+        return ConfigUtil::confirm('Enable ALL development tools?', false);
+    }
+
+    /**
+     * Prompt whether to include all GitHub integrations at once.
+     * @return bool True to include all integrations, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllGitHubIntegrations(): bool
+    {
+        return ConfigUtil::confirm('Include ALL GitHub integrations?', false);
+    }
+
+    /**
      * Prompt for the Laravel version support.
      * @return string The Laravel version
      */

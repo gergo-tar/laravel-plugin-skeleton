@@ -19,7 +19,6 @@ final class GitHub
     public const string ISSUE_TEMPLATE_FEATURE_FILE_NAME = 'feature_request.yml';
     public const string GIT_CLIFF_FILE_NAME = 'cliff.toml';
     public const string WORKFLOW_FILE_NAME = 'ci.yml';
-    public const string WORKFLOW_PACKAGIST_SYNC_FILE_NAME = 'packagist-sync.yml';
     public const string WORKFLOW_RELEASE_PLEASE_FILE_NAME = 'release-please.yml';
 
     public const string FUNDING_STUB = Stub::PATH
@@ -59,11 +58,6 @@ final class GitHub
         . '/' . self::FOLDER
         . '/' . self::WORKFLOWS_FOLDER
         . '/' . self::WORKFLOW_FILE_NAME . '.stub';
-
-    public const string WORKFLOW_PACKAGIST_SYNC_STUB = Stub::PATH
-        . '/' . self::FOLDER
-        . '/' . self::WORKFLOWS_FOLDER
-        . '/' . self::WORKFLOW_PACKAGIST_SYNC_FILE_NAME . '.stub';
 
     public const string WORKFLOW_RELEASE_PLEASE_STUB = Stub::PATH
         . '/' . self::FOLDER
@@ -116,14 +110,6 @@ final class GitHub
     public static function getWorkflowFilePath(): string
     {
         return self::getWorkflowsPath() . '/' . self::WORKFLOW_FILE_NAME;
-    }
-
-    /**
-     * Get the full path to the packagist sync workflow file using the global base path.
-     */
-    public static function getWorkflowPackagistSyncFilePath(): string
-    {
-        return self::getWorkflowsPath() . '/' . self::WORKFLOW_PACKAGIST_SYNC_FILE_NAME;
     }
 
     /**

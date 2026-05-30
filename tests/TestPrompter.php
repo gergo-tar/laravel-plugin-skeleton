@@ -247,6 +247,24 @@ final class TestPrompter implements PrompterInterface
         return (string)$this->answer('main_branch_name', 'main');
     }
 
+    #[\Override]
+    public function promptSelectAllFeatures(): bool
+    {
+        return (bool)$this->answer('select_all_features', false);
+    }
+
+    #[\Override]
+    public function promptSelectAllDevTools(): bool
+    {
+        return (bool)$this->answer('select_all_dev_tools', false);
+    }
+
+    #[\Override]
+    public function promptSelectAllGitHubIntegrations(): bool
+    {
+        return (bool)$this->answer('select_all_github_integrations', false);
+    }
+
     private function answer(string $key, string|bool|null $default = null): string|bool
     {
         $answer = $this->answers[$key] ?? null;

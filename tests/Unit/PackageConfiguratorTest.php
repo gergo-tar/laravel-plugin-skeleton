@@ -89,6 +89,49 @@ function configurationVariations(): array
             'composer_install' => false,
             'cleanup' => false,
         ],
+        'select all' => [
+            'author_name' => 'All User',
+            'author_email' => 'all@example.com',
+            'author_username' => 'alluser',
+            'vendor_name' => 'AllVendor',
+            'vendor_namespace' => 'AllVendor',
+            'package_name' => 'AllPackage',
+            'class_name' => 'AllPackage',
+            'description' => 'A full package via select-all',
+            'license' => 'MIT',
+            'main_branch_name' => 'main',
+            'php_version' => '^8.3',
+            'laravel_version' => '^13',
+            'select_all_features' => true,
+            'select_all_dev_tools' => true,
+            'select_all_github_integrations' => true,
+            // expected outcomes used by test assertions
+            'include_migration' => true,
+            'include_config' => true,
+            'include_routes' => true,
+            'route_type' => 'both',
+            'include_translations' => true,
+            'include_assets' => true,
+            'include_views' => true,
+            'include_command' => true,
+            'include_facade' => true,
+            'include_tests' => true,
+            'use_commitlint' => true,
+            'use_pint' => true,
+            'use_phpstan' => true,
+            'use_rector' => true,
+            'use_psalm' => true,
+            'include_coverage_reporting' => true,
+            'include_funding' => true,
+            'include_security_policy' => true,
+            'include_support_policy' => true,
+            'include_code_of_conduct' => true,
+            'include_issue_templates' => true,
+            'include_pull_request_template' => true,
+            'proceed' => true,
+            'composer_install' => false,
+            'cleanup' => false,
+        ],
         'minimal features' => [
             'author_name' => 'Minimal User',
             'author_email' => 'minimal@example.com',
@@ -154,7 +197,6 @@ test('all configuration variations are tested and files generated as expected', 
             : 'main';
 
         $workflowFile = $tempDir . "/.github/workflows/ci.yml";
-        $workflowPackagistFile = $tempDir . "/.github/workflows/packagist-sync.yml";
         $isCodeQualityToolSelected = (isset($expected['use_pint']) && $expected['use_pint'] === true)
             || (isset($expected['use_phpstan']) && $expected['use_phpstan'] === true)
             || (isset($expected['use_rector']) && $expected['use_rector'] === true);
@@ -163,7 +205,6 @@ test('all configuration variations are tested and files generated as expected', 
 
         if ($shouldIncludeWorkflow) {
             expect($workflowFile)->toBeFile();
-            expect($workflowPackagistFile)->toBeFile();
 
             $workflowContent = file_get_contents($workflowFile);
             expect($workflowContent)->toContain('- ' . $mainBranch);
@@ -174,13 +215,8 @@ test('all configuration variations are tested and files generated as expected', 
             } else {
                 expect($workflowContent)->not->toContain('codecov/codecov-action');
             }
-
-            $packagistContent = file_get_contents($workflowPackagistFile);
-            expect($packagistContent)->toContain('branches: [' . $mainBranch . ']');
-            expect($packagistContent)->not->toContain(':main_branch');
         } else {
             expect($workflowFile)->not->toBeFile();
-            expect($workflowPackagistFile)->not->toBeFile();
         }
 
         $workflowReleasePleaseFile = $tempDir . "/.github/workflows/release-please.yml";
@@ -351,6 +387,19 @@ test('all configuration variations are tested and files generated as expected', 
         } else {
             expect($packageJsonFile)->not->toBeFile();
             expect($commitLintFile)->not->toBeFile();
+        }
+
+        $composerJsonFile = $tempDir . '/composer.json';
+        expect($composerJsonFile)->toBeFile();
+        $composerJsonContent = file_get_contents($composerJsonFile);
+
+        if (isset($expected['include_tests']) && $expected['include_tests'] === true) {
+            expect($composerJsonContent)->toContain('"orchestra/testbench"');
+            expect($composerJsonContent)->toContain('"test": "vendor/bin/pest"');
+        } else {
+            expect($composerJsonContent)->not->toContain('"orchestra/testbench"');
+            expect($composerJsonContent)->not->toContain('"test": "vendor/bin/pest"');
+            expect($composerJsonContent)->not->toContain('"test-coverage": "vendor/bin/pest --coverage"');
         }
 
         $pintFile = $tempDir . "/pint.json";

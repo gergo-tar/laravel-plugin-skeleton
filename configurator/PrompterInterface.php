@@ -34,6 +34,9 @@ interface PrompterInterface
     public function promptIncludeTests(): bool;
     public function promptIncludeTranslations(): bool;
     public function promptIncludeViews(): bool;
+    public function promptSelectAllFeatures(): bool;
+    public function promptSelectAllDevTools(): bool;
+    public function promptSelectAllGitHubIntegrations(): bool;
 
     public function promptLaravelVersion(): string;
     public function promptLicense(): string;
