@@ -133,16 +133,19 @@ final class ConfigUtil
         $content = file_get_contents($file);
 
         foreach ($conditions as $feature => $enabled) {
-            $pattern = "/:if_{$feature}(.*?):endif_{$feature}/s";
-            if ($enabled) {
-                // Keep the block, just remove the markers
-                $content = preg_replace_callback($pattern, function ($matches) {
-                    return isset($matches[1]) ? trim($matches[1]) : '';
-                }, (string) $content);
-                continue;
-            }
-            // Remove the whole block
-            $content = preg_replace($pattern, '', (string) $content);
+            $pattern = "/:if_{$feature}(.*?)(?::else(.*?))?:endif_{$feature}/s";
+            $content = preg_replace_callback($pattern, function ($matches) use ($enabled) {
+                if ($enabled) {
+                    $result = $matches[1];
+                } elseif (isset($matches[2]) && $matches[2] !== '') {
+                    $result = $matches[2];
+                } else {
+                    return '';
+                }
+                $result = ltrim($result, "\n");
+                $result = rtrim($result, "\n");
+                return $result;
+            }, (string) $content);
         }
         file_put_contents($file, (string) $content);
     }

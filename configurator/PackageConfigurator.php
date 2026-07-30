@@ -277,19 +277,19 @@ final class PackageConfigurator
         // PHPStan job
         $phpstanJob = '';
         if ($this->usePhpStan) {
-            $phpstanJob = Tools::PHP_STAN_JOB;
+            $phpstanJob = str_replace(':php_version', $this->phpVersion, Tools::PHP_STAN_JOB);
         }
 
         // Pint job
         $pintJob = '';
         if ($this->usePint) {
-            $pintJob = Tools::PINT_JOB;
+            $pintJob = str_replace(':php_version', $this->phpVersion, Tools::PINT_JOB);
         }
 
         // Psalm job
         $psalmJob = '';
         if ($this->usePsalm) {
-            $psalmJob = Tools::PSALM_JOB;
+            $psalmJob = str_replace(':php_version', $this->phpVersion, Tools::PSALM_JOB);
         }
 
         // Copy stub files to their destination and replace placeholders
@@ -316,9 +316,9 @@ final class PackageConfigurator
                         ':variable' => $this->variableName,
                         ':php_version_comma_separated' => implode(', ', $phpVersionsArr),
                         ':php_version' => $this->phpVersion,
-                        ':laravel_version' => $this->laravelVersion,
-                        ':laravel_version_number' => $laravelVerNum,
                         ':testbench_version' => $testbenchVersion,
+                        ':laravel_version_number' => $laravelVerNum,
+                        ':laravel_version' => $this->laravelVersion,
                         ':phpstan_job' => $phpstanJob,
                         ':pint_job' => $pintJob,
                         ':psalm_job' => $psalmJob,
@@ -407,8 +407,8 @@ final class PackageConfigurator
             ConfigUtil::processConditionalBlocks(
                 GitHub::getWorkflowFilePath(),
                 [
-                    'include_tests' => $this->includeTests,
                     'include_coverage_reporting' => $this->includeCoverageReporting,
+                    'include_tests' => $this->includeTests,
                 ]
             );
         }
@@ -721,6 +721,6 @@ final class PackageConfigurator
      */
     private function isCodeQualityToolSelected(): bool
     {
-        return $this->usePhpStan || $this->usePint || $this->useRector;
+        return $this->usePhpStan || $this->usePint || $this->usePsalm || $this->useRector;
     }
 }
