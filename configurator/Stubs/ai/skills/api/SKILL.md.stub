@@ -1,0 +1,40 @@
+---
+name: api
+description: API development conventions for this package — route design, form requests, API resources, authorization, and API contract stability.
+license: MIT
+compatibility: opencode
+---
+
+# Package API Development
+
+Use this skill when building or changing the package's API routes
+(`:package_name`, Laravel :laravel_version).
+
+## Route design
+
+- Define API routes in `routes/api.php`; load them from the service provider.
+- Use a stable, versioned URL structure and consistent action naming.
+- Keep controllers thin: parse input, delegate to the package services, shape output.
+- Validate with form requests in `src/Http/Requests/` and keep rules explicit.
+
+## Resources and responses
+
+- Use API resources (`src/Http/Resources/`) to keep the wire format stable and documented.
+- Keep response shapes backward compatible; add fields, never silently remove or rename.
+- Do not leak internal models/columns into responses unintentionally.
+
+## Authorization
+
+- Enforce explicit authorization boundaries via policies or middleware when the package
+  provides them; never rely on the consumer's auth stack unless documented.
+- Every mutating endpoint must authenticate before side effects.
+
+## API tests
+
+- Cover success and failure paths, validation errors, authorization denials, and edge cases.
+- Test from the consumer's perspective by hitting the routes through the package `TestCase`.
+
+## Contract stability
+
+- Package endpoints are public contracts. Document request/response shapes in the README.
+- Breaking endpoint changes require a documented migration path and semver-major release.

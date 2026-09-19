@@ -10,6 +10,7 @@ use Configurator\Structure\Test;
 use Configurator\Structure\Route;
 use Configurator\Structure\Tools;
 use Configurator\Structure\Config;
+use Configurator\Structure\Ai;
 use Configurator\Structure\GitHub;
 use Configurator\PrompterInterface;
 use Configurator\Structure\Composer;
@@ -56,6 +57,12 @@ final class PackageConfigurator
     public bool $usePhpStan = Tools::IS_PHP_STAN_INCLUDED;
     public bool $useRector = Tools::IS_RECTOR_INCLUDED;
     public bool $usePsalm = Tools::IS_PSALM_INCLUDED;
+    public bool $enableAiSupport = Ai::IS_SUPPORT_ENABLED;
+    public bool $includeAgentsMd = Ai::IS_AGENTS_MD_INCLUDED;
+    public bool $includeOpenCodeAgents = Ai::IS_OPENCODE_AGENTS_INCLUDED;
+    public bool $includeOpenCodeSkills = Ai::IS_OPENCODE_SKILLS_INCLUDED;
+    public bool $includeClaudeCompatibility = Ai::IS_CLAUDE_COMPAT_INCLUDED;
+    public bool $includeCopilotInstructions = Ai::IS_COPILOT_INSTRUCTIONS_INCLUDED;
 
     private string $basePath = '';
     private string $packageName = '';
@@ -96,6 +103,9 @@ final class PackageConfigurator
         ConfiguratorOutput::printGitHubIntegrationSelections();
         $this->collectGitHubIntegrationSelections();
 
+        ConfiguratorOutput::printAiSelections();
+        $this->collectAiSelections();
+
         ConfiguratorOutput::printSummary($this);
         if (!$this->prompter->promptProceed()) {
             exit(1);
@@ -109,6 +119,7 @@ final class PackageConfigurator
         $this->handleTestingSelection();
         $this->updateReadmeFile();
         $this->updateServiceProviderFile();
+        $this->updateAgentsFile();
 
         $this->updateWorkflowFile();
         $this->createAdditionalDirectories();
@@ -258,6 +269,41 @@ final class PackageConfigurator
     }
 
     /**
+     * Collect AI-agent development selections.
+     *
+     * AI selections include AGENTS.md, OpenCode agents, OpenCode skills, Claude compatibility,
+     * and GitHub Copilot instructions.
+     */
+    public function collectAiSelections(): void
+    {
+        $this->enableAiSupport = $this->prompter->promptEnableAiSupport();
+
+        if (!$this->enableAiSupport) {
+            $this->includeAgentsMd = false;
+            $this->includeOpenCodeAgents = false;
+            $this->includeOpenCodeSkills = false;
+            $this->includeClaudeCompatibility = false;
+            $this->includeCopilotInstructions = false;
+            return;
+        }
+
+        if ($this->prompter->promptSelectAllAiFeatures()) {
+            $this->includeAgentsMd = true;
+            $this->includeOpenCodeAgents = true;
+            $this->includeOpenCodeSkills = true;
+            $this->includeClaudeCompatibility = true;
+            $this->includeCopilotInstructions = true;
+            return;
+        }
+
+        $this->includeAgentsMd = $this->prompter->promptIncludeAgentsMd();
+        $this->includeOpenCodeAgents = $this->prompter->promptIncludeOpenCodeAgents();
+        $this->includeOpenCodeSkills = $this->prompter->promptIncludeOpenCodeSkills();
+        $this->includeClaudeCompatibility = $this->prompter->promptIncludeClaudeCompatibility();
+        $this->includeCopilotInstructions = $this->prompter->promptIncludeCopilotInstructions();
+    }
+
+    /**
      * Process stub files and other necessary files.
      *
      * This includes copying stub files to their destinations and replacing placeholders with actual values.
@@ -329,6 +375,7 @@ final class PackageConfigurator
                             ? "\\{$this->vendorNamespace}\\{$this->className}\\Commands\\"
                             . "{$this->className}Command::class"
                             : '',
+                        ':command_name' => $this->packageSlug,
                     ]);
                 } elseif ($dest) {
                     ConfigUtil::writeln("Warning: Failed to copy $stubFile to $dest");
@@ -394,6 +441,39 @@ final class PackageConfigurator
                 'include_phpstan'    => $this->usePhpStan,
                 'include_psalm'      => $this->usePsalm,
                 'include_rector'     => $this->useRector,
+            ]
+        );
+    }
+
+    /**
+     * Update the AGENTS.md file based on selected features and development tools.
+     */
+    private function updateAgentsFile(): void
+    {
+        if (!$this->enableAiSupport || !$this->includeAgentsMd) {
+            return;
+        }
+
+        ConfigUtil::processConditionalBlocks(
+            $this->basePath . '/' . Ai::AGENTS_FILE_NAME,
+            [
+                'include_config'        => $this->includeConfig,
+                'include_migration'     => $this->includeMigration,
+                'include_translations'  => $this->includeTranslations,
+                'include_views'         => $this->includeViews,
+                'include_assets'        => $this->includeAssets,
+                'include_command'       => $this->includeCommand,
+                'include_facade'        => $this->includeFacade,
+                'include_web_routes'    => $this->includeRoutes
+                    && ($this->routeType === 'web' || $this->routeType === 'both'),
+                'include_api_routes'    => $this->includeRoutes
+                    && ($this->routeType === 'api' || $this->routeType === 'both'),
+                'include_tests'         => $this->includeTests,
+                'include_pint'          => $this->usePint,
+                'include_phpstan'       => $this->usePhpStan,
+                'include_psalm'         => $this->usePsalm,
+                'include_rector'        => $this->useRector,
+                'use_commitlint'        => $this->useCommitLint,
             ]
         );
     }
@@ -711,7 +791,122 @@ final class PackageConfigurator
             ];
         }
 
+        $this->addAiStubMappings($maps);
+
         return $maps;
+    }
+
+    /**
+     * Add the AI-agent stub mappings based on the selected AI features.
+     *
+     * @param array<string, array{0: string, 1: ?string}> $maps The existing stub mapping
+     */
+    private function addAiStubMappings(array &$maps): void
+    {
+        if (!$this->enableAiSupport) {
+            return;
+        }
+
+        if ($this->includeAgentsMd) {
+            $maps[Ai::AGENTS_STUB] = [Ai::getAgentsFilePath(), null];
+        }
+
+        if ($this->includeClaudeCompatibility) {
+            $maps[Ai::CLAUDE_STUB] = [Ai::getClaudeFilePath(), null];
+        }
+
+        if ($this->includeCopilotInstructions) {
+            $maps[Ai::COPILOT_STUB] = [Ai::getCopilotFilePath(), GitHub::getPath()];
+        }
+
+        if ($this->includeOpenCodeAgents) {
+            $agentsPath = Ai::getAgentsPath();
+            $maps[Ai::AGENT_ARCHITECT_STUB] = [
+                $agentsPath . '/' . Ai::AGENT_ARCHITECT_FILE_NAME,
+                $agentsPath,
+            ];
+            $maps[Ai::AGENT_PACKAGE_DEVELOPER_STUB] = [
+                $agentsPath . '/' . Ai::AGENT_PACKAGE_DEVELOPER_FILE_NAME,
+                $agentsPath,
+            ];
+            $maps[Ai::AGENT_SECURITY_STUB] = [
+                $agentsPath . '/' . Ai::AGENT_SECURITY_FILE_NAME,
+                $agentsPath,
+            ];
+            $maps[Ai::AGENT_PERFORMANCE_STUB] = [
+                $agentsPath . '/' . Ai::AGENT_PERFORMANCE_FILE_NAME,
+                $agentsPath,
+            ];
+            $maps[Ai::AGENT_REVIEWER_STUB] = [
+                $agentsPath . '/' . Ai::AGENT_REVIEWER_FILE_NAME,
+                $agentsPath,
+            ];
+
+            if ($this->includeTests) {
+                $maps[Ai::AGENT_TESTING_STUB] = [
+                    $agentsPath . '/' . Ai::AGENT_TESTING_FILE_NAME,
+                    $agentsPath,
+                ];
+            }
+
+            if ($this->includeMigration) {
+                $maps[Ai::AGENT_DATABASE_STUB] = [
+                    $agentsPath . '/' . Ai::AGENT_DATABASE_FILE_NAME,
+                    $agentsPath,
+                ];
+            }
+
+            if ($this->includeRoutes && ($this->routeType === 'api' || $this->routeType === 'both')) {
+                $maps[Ai::AGENT_API_STUB] = [
+                    $agentsPath . '/' . Ai::AGENT_API_FILE_NAME,
+                    $agentsPath,
+                ];
+            }
+        }
+
+        if ($this->includeOpenCodeSkills) {
+            $skillsPath = Ai::getSkillsPath();
+            $skillPath = static fn(string $name): string => $skillsPath . '/' . $name . '/' . Ai::SKILL_FILE_NAME;
+            $skillFolder = static fn(string $name): string => $skillsPath . '/' . $name;
+
+            $maps[Ai::SKILL_PACKAGE_DEVELOPMENT_STUB] = [
+                $skillPath(Ai::SKILL_PACKAGE_DEVELOPMENT),
+                $skillFolder(Ai::SKILL_PACKAGE_DEVELOPMENT),
+            ];
+            $maps[Ai::SKILL_LARAVEL_PACKAGE_STUB] = [
+                $skillPath(Ai::SKILL_LARAVEL_PACKAGE),
+                $skillFolder(Ai::SKILL_LARAVEL_PACKAGE),
+            ];
+            $maps[Ai::SKILL_CODE_REVIEW_STUB] = [
+                $skillPath(Ai::SKILL_CODE_REVIEW),
+                $skillFolder(Ai::SKILL_CODE_REVIEW),
+            ];
+            $maps[Ai::SKILL_RELEASE_STUB] = [
+                $skillPath(Ai::SKILL_RELEASE),
+                $skillFolder(Ai::SKILL_RELEASE),
+            ];
+
+            if ($this->includeTests) {
+                $maps[Ai::SKILL_TESTING_STUB] = [
+                    $skillPath(Ai::SKILL_TESTING),
+                    $skillFolder(Ai::SKILL_TESTING),
+                ];
+            }
+
+            if ($this->includeMigration) {
+                $maps[Ai::SKILL_DATABASE_STUB] = [
+                    $skillPath(Ai::SKILL_DATABASE),
+                    $skillFolder(Ai::SKILL_DATABASE),
+                ];
+            }
+
+            if ($this->includeRoutes && ($this->routeType === 'api' || $this->routeType === 'both')) {
+                $maps[Ai::SKILL_API_STUB] = [
+                    $skillPath(Ai::SKILL_API),
+                    $skillFolder(Ai::SKILL_API),
+                ];
+            }
+        }
     }
 
     /**

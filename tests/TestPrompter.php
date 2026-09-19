@@ -194,6 +194,48 @@ final class TestPrompter implements PrompterInterface
     }
 
     #[\Override]
+    public function promptEnableAiSupport(): bool
+    {
+        return (bool)$this->answer('enable_ai_support', true);
+    }
+
+    #[\Override]
+    public function promptSelectAllAiFeatures(): bool
+    {
+        return (bool)$this->answer('select_all_ai_features', false);
+    }
+
+    #[\Override]
+    public function promptIncludeAgentsMd(): bool
+    {
+        return (bool)$this->answer('include_agents_md', true);
+    }
+
+    #[\Override]
+    public function promptIncludeOpenCodeAgents(): bool
+    {
+        return (bool)$this->answer('include_opencode_agents', true);
+    }
+
+    #[\Override]
+    public function promptIncludeOpenCodeSkills(): bool
+    {
+        return (bool)$this->answer('include_opencode_skills', true);
+    }
+
+    #[\Override]
+    public function promptIncludeClaudeCompatibility(): bool
+    {
+        return (bool)$this->answer('include_claude_compatibility', false);
+    }
+
+    #[\Override]
+    public function promptIncludeCopilotInstructions(): bool
+    {
+        return (bool)$this->answer('include_copilot_instructions', false);
+    }
+
+    #[\Override]
     public function promptEnableCommitLint(): bool
     {
         return (bool)$this->answer('use_commitlint', true);

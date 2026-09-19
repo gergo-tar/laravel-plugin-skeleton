@@ -11,6 +11,7 @@ This skeleton helps you quickly scaffold a modern Laravel package with:
 -   Service provider and optional features (migrations, config, commands, etc.)
 -   Testing infrastructure (Pest)
 -   Pre-configured dev tools (PHPStan, Rector, Pint)
+-   AI-agent development support (AGENTS.md, OpenCode agents and skills)
 -   Clean-up of unused files based on your choices
 
 ## 🚀 How the Configuration Process Works
@@ -48,6 +49,28 @@ You can choose to include any of the following:
 -   **Artisan Commands** (`src/Commands/`)
 -   **Facade** (`src/Facades/`)
 -   **FUNDING file** (`.github/FUNDING.yml`)
+
+## 🤖 AI-Agent Development
+
+The configurator can generate AI-agent development support for your package. Enable it with
+**"Enable AI-agent development support?"**; the individual options can be toggled one by one or
+skipped with **"Include ALL AI-agent features?"**.
+
+| Option                    | What it generates                               |
+| ------------------------- | ----------------------------------------------- |
+| AGENTS.md                 | Canonical project instructions that AI agents read first |
+| OpenCode Agents           | `.opencode/agents/*.md` specialist agents       |
+| OpenCode Skills           | `.opencode/skills/*/SKILL.md`                   |
+| Claude Code compatibility | `CLAUDE.md` referencing `AGENTS.md` (`@AGENTS.md`) |
+| Codex                     | Covered automatically via `AGENTS.md` (no extra file needed) |
+| GitHub Copilot            | `.github/copilot-instructions.md`               |
+
+Generated agents and skills are **feature-aware**: `testing` agent/skill only when tests are
+enabled, `database` when migrations are enabled, and `api` when API routes are enabled. The
+`architect`, `package-developer`, `security`, `performance`, and `reviewer` agents, together
+with the `package-development`, `laravel-package`, `code-review`, and `release` skills, are
+always generated. The `AGENTS.md` instruction sections resolve to exactly the features and dev
+tools you selected (e.g. a Pint-only setup only documents `composer format`).
 
 ## 🧩 Dev Tools
 

@@ -13,6 +13,13 @@ interface PrompterInterface
     public function promptCleanup(): bool;
     public function promptComposerInstall(): bool;
     public function promptDescription(?string $defaultDescription = null): string;
+    public function promptEnableAiSupport(): bool;
+    public function promptSelectAllAiFeatures(): bool;
+    public function promptIncludeAgentsMd(): bool;
+    public function promptIncludeOpenCodeAgents(): bool;
+    public function promptIncludeOpenCodeSkills(): bool;
+    public function promptIncludeClaudeCompatibility(): bool;
+    public function promptIncludeCopilotInstructions(): bool;
     public function promptEnableCommitLint(): bool;
     public function promptEnablePint(): bool;
     public function promptEnablePhpStan(): bool;

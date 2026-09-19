@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Configurator;
 
 use Configurator\ConfigUtil;
+use Configurator\Structure\Ai;
 use Configurator\Structure\Src;
 use Configurator\Structure\Test;
 use Configurator\Structure\Route;
@@ -104,6 +105,82 @@ final class ConfiguratorPrompter implements PrompterInterface
     public function promptDescription(?string $defaultDescription = null): string
     {
         return ConfigUtil::ask('Package description', $defaultDescription ?? 'A Laravel package');
+    }
+
+    /**
+     * Prompt whether to enable AI-agent development support.
+     * @return bool True to enable AI support, false otherwise
+     */
+    #[\Override]
+    public function promptEnableAiSupport(): bool
+    {
+        return ConfigUtil::confirm('Enable AI-agent development support?', Ai::IS_SUPPORT_ENABLED);
+    }
+
+    /**
+     * Prompt whether to enable all AI-agent features at once.
+     * @return bool True to include all AI features, false to choose individually
+     */
+    #[\Override]
+    public function promptSelectAllAiFeatures(): bool
+    {
+        return ConfigUtil::confirm('Include ALL AI-agent features?', false);
+    }
+
+    /**
+     * Prompt whether to include the canonical AGENTS.md project instructions.
+     * @return bool True to include AGENTS.md, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeAgentsMd(): bool
+    {
+        return ConfigUtil::confirm('Include AGENTS.md (project instructions)?', Ai::IS_AGENTS_MD_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include OpenCode agent templates.
+     * @return bool True to include OpenCode agents, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeOpenCodeAgents(): bool
+    {
+        return ConfigUtil::confirm('Include OpenCode agent templates?', Ai::IS_OPENCODE_AGENTS_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include OpenCode skills.
+     * @return bool True to include OpenCode skills, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeOpenCodeSkills(): bool
+    {
+        return ConfigUtil::confirm('Include OpenCode skills?', Ai::IS_OPENCODE_SKILLS_INCLUDED);
+    }
+
+    /**
+     * Prompt whether to include Claude Code compatibility (CLAUDE.md).
+     * @return bool True to include CLAUDE.md, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeClaudeCompatibility(): bool
+    {
+        return ConfigUtil::confirm(
+            'Include Claude Code compatibility (CLAUDE.md)?',
+            Ai::IS_CLAUDE_COMPAT_INCLUDED
+        );
+    }
+
+    /**
+     * Prompt whether to include GitHub Copilot instructions.
+     * @return bool True to include Copilot instructions, false otherwise
+     */
+    #[\Override]
+    public function promptIncludeCopilotInstructions(): bool
+    {
+        return ConfigUtil::confirm(
+            'Include GitHub Copilot instructions?',
+            Ai::IS_COPILOT_INSTRUCTIONS_INCLUDED
+        );
     }
 
     /**

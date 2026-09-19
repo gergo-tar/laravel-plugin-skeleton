@@ -82,6 +82,16 @@ final class ConfiguratorOutput
     }
 
     /**
+     * Print the AI-agent development section.
+     */
+    public static function printAiSelections(): void
+    {
+        ConfigUtil::writeln('');
+        ConfigUtil::writeln('🤖 AI Agent Development');
+        ConfigUtil::writeln('────────────────────────────────────────────────────────────────');
+    }
+
+    /**
      * Print the configuration summary.
      * @param PackageConfigurator $config The package configuration
      */
@@ -126,6 +136,15 @@ final class ConfiguratorOutput
         ConfigUtil::writeln("  Code of Conduct: " . ($config->includeCodeOfConduct ? 'yes' : 'no'));
         ConfigUtil::writeln("  Issue Templates: " . ($config->includeIssueTemplates ? 'yes' : 'no'));
         ConfigUtil::writeln("  PR Template    : " . ($config->includePullRequestTemplate ? 'yes' : 'no'));
+        ConfigUtil::writeln('');
+        ConfigUtil::writeln('AI Agent Development:');
+        ConfigUtil::writeln("  AI Support     : " . ($config->enableAiSupport ? 'yes' : 'no'));
+        ConfigUtil::writeln("  OpenCode Agents : " . ($config->includeOpenCodeAgents ? 'yes' : 'no'));
+        ConfigUtil::writeln("  OpenCode Skills : " . ($config->includeOpenCodeSkills ? 'yes' : 'no'));
+        ConfigUtil::writeln("  AGENTS.md       : " . ($config->includeAgentsMd ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Claude Code     : " . ($config->includeClaudeCompatibility ? 'yes' : 'no'));
+        ConfigUtil::writeln("  Codex           : " . ($config->includeAgentsMd ? 'yes (via AGENTS.md)' : 'no'));
+        ConfigUtil::writeln("  Copilot         : " . ($config->includeCopilotInstructions ? 'yes' : 'no'));
         ConfigUtil::writeln('══════════════════════════════════════════════════════════════');
         ConfigUtil::writeln('');
     }

@@ -76,6 +76,22 @@ At the start of each group you can answer **yes** to "Include/Enable ALL …?" t
 | Issue Templates | `.github/ISSUE_TEMPLATE/bug_report.yml` + `feature_request.yml` |
 | PR Template     | `.github/pull_request_template.md`                              |
 
+### 🤖 AI-Agent Development
+
+| Option                    | What it generates                               |
+| ------------------------- | ----------------------------------------------- |
+| AGENTS.md                 | Canonical project instructions for AI agents    |
+| OpenCode Agents           | `.opencode/agents/*.md` specialist agents       |
+| OpenCode Skills           | `.opencode/skills/*/SKILL.md` load-on-demand knowledge |
+| Claude Code compatibility | `CLAUDE.md` referencing `AGENTS.md`             |
+| Codex                     | Covered automatically via `AGENTS.md`           |
+| GitHub Copilot            | `.github/copilot-instructions.md`               |
+
+When you enable AI support, the generated package ships with canonical `AGENTS.md` instructions
+and (optionally) OpenCode agents and skills. Feature- and tool-aware agents (testing, database,
+API) are only generated when the related features are enabled, and the AGENTS.md instruction
+sections mirror exactly which features and dev tools you selected.
+
 ## 🖥️ Generation Flow Examples
 
 ### Example: full package with all options enabled
@@ -141,6 +157,10 @@ Enable ALL development tools? (yes/no) [no]: yes
 ────────────────────────────────────────────────────────────────
 Include ALL GitHub integrations? (yes/no) [no]: yes
 
+🤖 AI Agent Development
+────────────────────────────────────────────────────────────────
+Include ALL AI-agent features? (yes/no) [no]: yes
+
 📋 Configuration Summary
 ────────────────────────────────────────────────────────────────
 Author       : Gergő Tar (gergotar, dev@gergotar.com)
@@ -179,6 +199,15 @@ GitHub Integration:
   Code of Conduct: yes
   Issue Templates: yes
   PR Template    : yes
+
+AI Agent Development:
+  AI Support     : yes
+  OpenCode Agents: yes
+  OpenCode Skills: yes
+  AGENTS.md      : yes
+  Claude Code    : yes
+  Codex          : yes (via AGENTS.md)
+  Copilot        : yes
 ══════════════════════════════════════════════════════════════
 
 Proceed with the above configuration? (yes/no) [yes]: yes
@@ -292,6 +321,16 @@ Include code of conduct? (yes/no) [no]:
 Include GitHub issue templates? (yes/no) [no]: yes
 Include pull request template? (yes/no) [no]: yes
 
+🤖 AI Agent Development
+────────────────────────────────────────────────────────────────
+Enable AI-agent development support? (yes/no) [yes]:
+Include ALL AI-agent features? (yes/no) [no]:
+Include AGENTS.md (project instructions)? (yes/no) [yes]:
+Include OpenCode agent templates? (yes/no) [yes]:
+Include OpenCode skills? (yes/no) [yes]:
+Include Claude Code compatibility? (yes/no) [no]:
+Include GitHub Copilot instructions? (yes/no) [no]:
+
 📋 Configuration Summary
 ────────────────────────────────────────────────────────────────
 Author       : Gergő Tar (gergotar, dev@gergotar.com)
@@ -330,6 +369,15 @@ GitHub Integration:
   Code of Conduct: no
   Issue Templates: yes
   PR Template    : yes
+
+AI Agent Development:
+  AI Support     : yes
+  OpenCode Agents: yes
+  OpenCode Skills: yes
+  AGENTS.md      : yes
+  Claude Code    : no
+  Codex          : yes (via AGENTS.md)
+  Copilot        : no
 ══════════════════════════════════════════════════════════════
 
 Proceed with the above configuration? (yes/no) [yes]:
@@ -373,6 +421,7 @@ Based on your selections, the configurator generates and updates:
 - Optional route files under `routes/` (API, web, or both)
 - Test structure under `tests/`
 - Optional GitHub governance and community templates under `.github/` (issue/PR templates, code of conduct, support, security)
+- Optional AI-agent development files (`AGENTS.md`, OpenCode agents and skills under `.opencode/`, `CLAUDE.md`, `.github/copilot-instructions.md`)
 - Optional quality/config files (PHPStan, Rector, Pint, commitlint, release tooling)
 
 ## 🧪 Useful Commands
