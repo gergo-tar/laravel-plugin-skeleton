@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/gergo-tar/laravel-plugin-skeleton/compare/v1.4.0...v1.4.1) (2026-07-30)
+
+
+### Bug Fixes
+
+* **github:** stubs ([47ed437](https://github.com/gergo-tar/laravel-plugin-skeleton/commit/47ed4376d1eb735ecf609050eb9221e2043f67f1))
+
 ## [1.4.0](https://github.com/gergo-tar/laravel-plugin-skeleton/compare/v1.3.0...v1.4.0) (2026-05-30)
 
 
