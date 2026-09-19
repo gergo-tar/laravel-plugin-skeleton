@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/gergo-tar/laravel-plugin-skeleton/compare/v1.4.1...v1.5.0) (2026-09-19)
+
+
+### Features
+
+* add AI-agent development support to generated packages ([5214c54](https://github.com/gergo-tar/laravel-plugin-skeleton/commit/5214c54655564377899127a0795c373b84f56cad))
+
 ## [1.4.1](https://github.com/gergo-tar/laravel-plugin-skeleton/compare/v1.4.0...v1.4.1) (2026-07-30)
 
 
