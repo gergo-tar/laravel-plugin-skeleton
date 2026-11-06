@@ -42,7 +42,7 @@
     "squizlabs/php_codesniffer": "^4.0",
     "friendsofphp/php-cs-fixer": "^3.95",
     "rector/rector": "^2.5",
-    "vimeo/psalm": "^6.16"
+    "vimeo/psalm": "^6.16 || ^7.0"
   },
   "scripts": {
     "test": "pest",
